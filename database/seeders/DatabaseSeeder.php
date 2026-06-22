@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Seed test data for transactions and categories
+        $this->call(TestDataSeeder::class);
     }
 }
