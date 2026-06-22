@@ -25,8 +25,16 @@ class DashboardController extends Controller
             ->where('type', 'expense')
             ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
+
+        $totalIncomeAll = $user->transactions()
+            ->where('type', 'income')
+            ->sum('amount');
+
+        $totalExpenseAll = $user->transactions()
+            ->where('type', 'expense')
+            ->sum('amount');
         
-        $balance = $totalIncome - $totalExpense;
+        $balance = $totalIncomeAll - $totalExpenseAll;
         
         // 2. Grafik Tren Pengeluaran Per Minggu (Bulan Berjalan)
         $expenses = $user->transactions()
