@@ -184,7 +184,7 @@
 
     <!-- Main Content Canvas -->
     <main class="flex-1 flex flex-col min-h-screen overflow-x-hidden relative">
-        <div class="p-container-margin md:p-xl flex-1 max-w-5xl mx-auto w-full space-y-lg relative z-10">
+        <div class="p-container-margin md:p-xl flex-1 max-w-5xl mx-auto w-full space-y-lg relative z-10 pb-24 md:pb-0">
             
             <!-- Success Status Flash Notification -->
             @if (session('success') || session('status'))
