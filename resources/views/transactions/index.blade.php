@@ -18,10 +18,96 @@
                 </div>
             @endif
 
+            <!-- Filter Section -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4">Filter & Pencarian</h3>
+                    <form method="GET" action="{{ route('transactions.index') }}" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Search -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari</label>
+                                <input type="text"
+                                       name="search"
+                                       id="search"
+                                       value="{{ request('search') }}"
+                                       placeholder="Cari catatan atau kategori..."
+                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div>
+                                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                <select name="category_id"
+                                        id="category_id"
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }} ({{ $category->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Type Filter -->
+                            <div>
+                                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
+                                <select name="type"
+                                        id="type"
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Semua Tipe</option>
+                                    <option value="income" {{ request('type') === 'income' ? 'selected' : '' }}>Pemasukan</option>
+                                    <option value="expense" {{ request('type') === 'expense' ? 'selected' : '' }}>Pengeluaran</option>
+                                </select>
+                            </div>
+
+                            <!-- Start Date -->
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
+                                <input type="date"
+                                       name="start_date"
+                                       id="start_date"
+                                       value="{{ request('start_date') }}"
+                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+
+                            <!-- End Date -->
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
+                                <input type="date"
+                                       name="end_date"
+                                       id="end_date"
+                                       value="{{ request('end_date') }}"
+                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex items-end gap-2">
+                                <button type="submit"
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Filter
+                                </button>
+                                <a href="{{ route('transactions.index') }}"
+                                   class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                    Reset
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     @if($transactions->isEmpty())
-                        <p class="text-gray-500">Belum ada transaksi. Silakan tambahkan transaksi baru.</p>
+                        <p class="text-gray-500">
+                            @if(request()->hasAny(['search', 'category_id', 'type', 'start_date', 'end_date']))
+                                Tidak ada transaksi yang sesuai dengan filter. <a href="{{ route('transactions.index') }}" class="text-blue-500 hover:underline">Reset filter</a>
+                            @else
+                                Belum ada transaksi. Silakan tambahkan transaksi baru.
+                            @endif
+                        </p>
                     @else
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">

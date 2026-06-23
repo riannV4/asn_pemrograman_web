@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
+
             <!-- Filter Form -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
@@ -18,8 +18,8 @@
                             <label for="filter" class="block text-sm font-medium text-gray-700 mb-2">
                                 Pilih Periode
                             </label>
-                            <select id="filter" 
-                                    name="filter" 
+                            <select id="filter"
+                                    name="filter"
                                     class="block w-full md:w-64 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                     onchange="toggleCustomDate(this.value)">
                                 <option value="weekly" {{ $filterType === 'weekly' ? 'selected' : '' }}>Weekly</option>
@@ -34,9 +34,9 @@
                                 <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
                                     Tanggal Mulai
                                 </label>
-                                <input type="date" 
-                                       id="start_date" 
-                                       name="start_date" 
+                                <input type="date"
+                                       id="start_date"
+                                       name="start_date"
                                        value="{{ $filterType === 'custom' && $startDate ? $startDate->format('Y-m-d') : '' }}"
                                        class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                             </div>
@@ -44,9 +44,9 @@
                                 <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
                                     Tanggal Akhir
                                 </label>
-                                <input type="date" 
-                                       id="end_date" 
-                                       name="end_date" 
+                                <input type="date"
+                                       id="end_date"
+                                       name="end_date"
                                        value="{{ $filterType === 'custom' && $endDate ? $endDate->format('Y-m-d') : '' }}"
                                        class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                             </div>
@@ -107,7 +107,7 @@
 
             <!-- Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
+
                 <!-- Pie Chart - Expense by Category -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
@@ -117,37 +117,14 @@
                         @if(empty($pieChartData['labels']))
                             <p class="text-gray-500">Tidak ada data pengeluaran</p>
                         @else
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Kategori
-                                            </th>
-                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Total
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($pieChartData['labels'] as $index => $label)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $label }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
-                                                    Rp {{ number_format($pieChartData['data'][$index], 0, ',', '.') }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="pieChart"></canvas>
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <!-- Daily Expense Trend -->
+                <!-- Daily Expense Trend - Line Chart -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">
@@ -156,31 +133,8 @@
                         @if(empty($dailyExpenseTrend['labels']))
                             <p class="text-gray-500">Tidak ada data pengeluaran harian</p>
                         @else
-                            <div class="overflow-x-auto max-h-64 overflow-y-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50 sticky top-0">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Tanggal
-                                            </th>
-                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Total
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($dailyExpenseTrend['labels'] as $index => $label)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $label }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
-                                                    Rp {{ number_format($dailyExpenseTrend['data'][$index], 0, ',', '.') }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="trendChart"></canvas>
                             </div>
                         @endif
                     </div>
@@ -194,48 +148,8 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">
                         Income vs Expense per Bulan (Tahun {{ date('Y') }})
                     </h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Bulan
-                                    </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Income
-                                    </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Expense
-                                    </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Balance
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($barChartData['labels'] as $index => $month)
-                                    @php
-                                        $income = $barChartData['income'][$index];
-                                        $expense = $barChartData['expense'][$index];
-                                        $monthBalance = $income - $expense;
-                                    @endphp
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                            {{ $month }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 text-right font-medium">
-                                            Rp {{ number_format($income, 0, ',', '.') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right font-medium">
-                                            Rp {{ number_format($expense, 0, ',', '.') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium {{ $monthBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                            Rp {{ number_format($monthBalance, 0, ',', '.') }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div style="position: relative; height: 350px;">
+                        <canvas id="barChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -280,7 +194,7 @@
                                                 {{ $transaction->category ? $transaction->category->name : '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ $transaction->type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                     {{ $transaction->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}
                                                 </span>
@@ -303,6 +217,8 @@
         </div>
     </div>
 
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         function toggleCustomDate(value) {
             const customDateRange = document.getElementById('custom-date-range');
@@ -312,5 +228,129 @@
                 customDateRange.classList.add('hidden');
             }
         }
+
+        // Pie Chart - Expense by Category
+        @if(!empty($pieChartData['labels']))
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($pieChartData['labels']),
+                    datasets: [{
+                        data: @json($pieChartData['data']),
+                        backgroundColor: @json($pieChartData['colors']),
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        @endif
+
+        // Line Chart - Daily Expense Trend
+        @if(!empty($dailyExpenseTrend['labels']))
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: @json($dailyExpenseTrend['labels']),
+                    datasets: [{
+                        label: 'Pengeluaran Harian (Rp)',
+                        data: @json($dailyExpenseTrend['data']),
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        @endif
+
+        // Bar Chart - Income vs Expense
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: @json($barChartData['labels']),
+                datasets: [
+                    {
+                        label: 'Pemasukan (Rp)',
+                        data: @json($barChartData['income']),
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                        borderColor: 'rgba(22, 163, 74, 1)',
+                        borderWidth: 1.5,
+                        borderRadius: 5
+                    },
+                    {
+                        label: 'Pengeluaran (Rp)',
+                        data: @json($barChartData['expense']),
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
+                        borderWidth: 1.5,
+                        borderRadius: 5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp' + value.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </x-app-layout>

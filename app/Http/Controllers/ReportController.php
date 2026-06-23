@@ -77,32 +77,46 @@ class ReportController extends Controller
         // Format untuk Chart.js Pie Chart
         $pieChartData = [
             'labels' => [],
-            'data' => []
+            'data' => [],
+            'colors' => []
         ];
-        
+
         foreach ($expenseByCategory as $item) {
             $pieChartData['labels'][] = $item->category ? $item->category->name : 'Tanpa Kategori';
             $pieChartData['data'][] = (float) $item->total;
         }
+
+        $pieChartData['colors'] = $this->generateColors(count($pieChartData['labels']));
         
         // 5. Bar Chart Data - Income vs Expense per Bulan (Tahun Berjalan)
+        // Filter: Only include transactions within user's selected date range
         $currentYear = Carbon::now()->year;
         $monthlyData = [];
-        
+
         for ($month = 1; $month <= 12; $month++) {
             $monthStart = Carbon::create($currentYear, $month, 1)->startOfMonth();
             $monthEnd = Carbon::create($currentYear, $month, 1)->endOfMonth();
-            
-            $monthlyIncome = $user->transactions()
-                ->where('type', 'income')
-                ->whereBetween('transaction_date', [$monthStart, $monthEnd])
-                ->sum('amount');
-            
-            $monthlyExpense = $user->transactions()
-                ->where('type', 'expense')
-                ->whereBetween('transaction_date', [$monthStart, $monthEnd])
-                ->sum('amount');
-            
+
+            // Calculate intersection of month with user's selected date range
+            $rangeStart = max($monthStart, $startDate);
+            $rangeEnd = min($monthEnd, $endDate);
+
+            // Only query if there's an overlap between month and selected range
+            if ($rangeStart <= $rangeEnd) {
+                $monthlyIncome = $user->transactions()
+                    ->where('type', 'income')
+                    ->whereBetween('transaction_date', [$rangeStart, $rangeEnd])
+                    ->sum('amount');
+
+                $monthlyExpense = $user->transactions()
+                    ->where('type', 'expense')
+                    ->whereBetween('transaction_date', [$rangeStart, $rangeEnd])
+                    ->sum('amount');
+            } else {
+                $monthlyIncome = 0;
+                $monthlyExpense = 0;
+            }
+
             $monthlyData[] = [
                 'month' => Carbon::create($currentYear, $month, 1)->format('M'),
                 'income' => (float) $monthlyIncome,
@@ -149,5 +163,16 @@ class ReportController extends Controller
             'barChartData',
             'dailyExpenseTrend'
         ));
+    }
+
+    private function generateColors($count)
+    {
+        $colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
+            '#36A2EB', '#FFCE56', '#FF9F40', '#C9CBCF', '#4BC0C0'
+        ];
+
+        return array_slice($colors, 0, $count);
     }
 }

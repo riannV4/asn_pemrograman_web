@@ -11,15 +11,46 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Auth::user()->transactions()
-            ->with('category')
-            ->latest('transaction_date')
+        $query = Auth::user()->transactions()->with('category');
+
+        // Filter by search (notes or category name)
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('notes', 'like', "%{$search}%")
+                  ->orWhereHas('category', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        // Filter by type (income/expense)
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('transaction_date', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('transaction_date', '<=', $request->input('end_date'));
+        }
+
+        $transactions = $query->latest('transaction_date')
             ->latest('created_at')
             ->get();
-        
-        return view('transactions.index', compact('transactions'));
+
+        $categories = Auth::user()->categories()->orderBy('name')->get();
+
+        return view('transactions.index', compact('transactions', 'categories'));
     }
 
     /**
