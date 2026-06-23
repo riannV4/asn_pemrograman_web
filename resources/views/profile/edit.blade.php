@@ -241,15 +241,6 @@
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <div class="flex items-center gap-3 text-on-surface">
-                                        <span class="material-symbols-outlined text-on-surface-variant">language</span>
-                                        <span class="text-sm">Language</span>
-                                    </div>
-                                    <div class="flex items-center text-primary font-bold text-sm cursor-pointer">
-                                        Bahasa <span class="material-symbols-outlined ml-1 text-sm">chevron_right</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3 text-on-surface">
                                         <span class="material-symbols-outlined text-on-surface-variant">info</span>
                                         <span class="text-sm">About Kostly</span>
                                     </div>
@@ -399,18 +390,6 @@
                                         <input checked class="sr-only peer" type="checkbox" value=""/>
                                         <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                     </label>
-                                </div>
-                                <div class="flex items-center justify-between p-md border-b border-outline-variant/30 last:border-0">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-secondary-container/50 flex items-center justify-center text-primary">
-                                            <span class="material-symbols-outlined text-[20px]">language</span>
-                                        </div>
-                                        <span class="text-sm font-semibold text-on-surface">Bahasa</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-on-surface-variant">
-                                        <span class="text-xs">Indonesia</span>
-                                        <span class="material-symbols-outlined text-outline text-[18px]">chevron_right</span>
-                                    </div>
                                 </div>
                                 <div class="flex items-center justify-between p-md border-b border-outline-variant/30 last:border-0">
                                     <div class="flex items-center gap-3">
