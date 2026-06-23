@@ -364,17 +364,17 @@ Refresh Dashboard & Laporan
 
 | No  | Nama                    | NPM       | Role                 |
 | --- | ----------------------- | --------- | -------------------- |
-| 1   | Khilmi Wahyu Saputra    | 241110061 | Backend Developer    |
-| 2   | Muh Duta Arkazora       | 241110079 | Backend Developer    |
-| 3   | Trian Rossi Karurukan   | 241110111 | Frontend Developer   |
+| 1   | Khilmi Wahyu Saputra    | 241110061 | Full Stack Developer |
+| 2   | Muh Duta Arkazora       | 241110079 | Frontend Developer   |
+| 3   | Trian Rossi Karurukan   | 241110111 | Full Stack Developer |
 | 4   | Muh Adzin Fakhir Rahman | 241110076 | UI/UX Designer       |
-| 5   | Muh Yasir Al Fatah      | 241110085 | Full Stack Developer |
+| 5   | Muh Yasir Al Fatah      | 241110085 | UI/UX Designer       |
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini dibuat untuk keperluan akademik Politeknik Negeri Banjarmasin.
+Proyek ini dibuat untuk keperluan akademik Universitas Mercu Buana Yogyakarta.
 
 ---
 
@@ -384,4 +384,4 @@ Untuk pertanyaan atau feedback, silakan hubungi tim pengembang atau buka issue d
 
 ---
 
-**Dibuat dengan ❤️ oleh SAYA AKAN LAWAN!! Team**
+Tetapi hari ini di Jogja saya sampaikan, SAYA AKAN LAWAN!!!!
