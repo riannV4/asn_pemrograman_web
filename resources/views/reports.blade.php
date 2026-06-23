@@ -303,14 +303,14 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                     
                     <!-- Line Chart: Tren Pengeluaran Harian -->
-                    <div class="lg:col-span-2 bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col h-[400px]">
+                    <div class="lg:col-span-2 bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col min-h-[380px]">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline-md text-headline-md text-on-surface">Tren Pengeluaran Harian</h3>
+                            <h3 class="font-headline-md text-base sm:text-headline-md text-on-surface">Tren Pengeluaran Harian</h3>
                             <button class="text-on-surface-variant hover:text-primary transition-colors">
                                 <span class="material-symbols-outlined">more_vert</span>
                             </button>
                         </div>
-                        <div class="flex-1 relative w-full h-full">
+                        <div class="relative w-full h-[280px] sm:h-[320px]">
                             @if(empty($dailyExpenseTrend['labels']))
                                 <div class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-body-md bg-surface-container-lowest/50 rounded-xl">
                                     Tidak ada data pengeluaran
@@ -322,17 +322,22 @@
                     </div>
                     
                     <!-- Donut Chart: Distribusi Kategori -->
-                    <div class="bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col h-[400px]">
+                    <div class="bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col min-h-[380px]">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline-md text-headline-md text-on-surface">Distribusi Pengeluaran</h3>
+                            <h3 class="font-headline-md text-base sm:text-headline-md text-on-surface">Distribusi Pengeluaran</h3>
                         </div>
-                        <div class="flex-grow relative w-full max-h-[200px] flex items-center justify-center mb-4">
+                        <div class="relative w-full h-[180px] sm:h-[200px] flex items-center justify-center mb-4">
                             @if(empty($pieChartData['labels']))
                                 <div class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-body-md bg-surface-container-lowest/50 rounded-xl">
                                     Tidak ada data pengeluaran
                                 </div>
                             @else
                                 <canvas id="donutChart"></canvas>
+                                <!-- Center text inside Donut cutout -->
+                                <div class="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                                    <span class="text-xl sm:text-2xl font-bold text-on-surface">100%</span>
+                                    <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Total</span>
+                                </div>
                             @endif
                         </div>
                         
@@ -364,21 +369,21 @@
                     </div>
                     
                     <!-- Bar Chart: Pemasukan vs Pengeluaran (Last 4 Weeks) -->
-                    <div class="lg:col-span-3 bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col h-[350px]">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline-md text-headline-md text-on-surface">Pemasukan vs Pengeluaran (4 Minggu Terakhir)</h3>
-                            <div class="flex items-center gap-4 font-body-md text-body-md">
+                    <div class="lg:col-span-3 bg-white rounded-xl p-4 lg:p-6 card-shadow border border-outline-variant/10 flex flex-col min-h-[350px]">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                            <h3 class="font-headline-md text-base sm:text-headline-md text-on-surface">Pemasukan vs Pengeluaran (4 Minggu Terakhir)</h3>
+                            <div class="flex items-center gap-4 font-body-md text-sm">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-primary"></div>
-                                    <span class="text-on-surface-variant">Pemasukan</span>
+                                    <div class="w-3.5 h-3.5 rounded-full bg-primary"></div>
+                                    <span class="text-on-surface-variant font-semibold">Pemasukan</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-error"></div>
-                                    <span class="text-on-surface-variant">Pengeluaran</span>
+                                    <div class="w-3.5 h-3.5 rounded-full bg-error"></div>
+                                    <span class="text-on-surface-variant font-semibold">Pengeluaran</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-1 relative w-full h-full">
+                        <div class="relative w-full h-[240px] sm:h-[280px]">
                             <canvas id="barChart"></canvas>
                         </div>
                     </div>
