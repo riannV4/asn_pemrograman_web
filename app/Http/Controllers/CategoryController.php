@@ -38,7 +38,7 @@ class CategoryController extends Controller
 
         Auth::user()->categories()->create($validated);
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil dibuat.');
     }
 
@@ -80,7 +80,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil diperbarui.');
     }
 
@@ -96,7 +96,7 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil dihapus.');
     }
 }
