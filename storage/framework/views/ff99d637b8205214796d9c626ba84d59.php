@@ -1,4 +1,13 @@
-<x-layouts.mobile-app :currentPage="'dashboard'">
+<?php if (isset($component)) { $__componentOriginal8b1a96032cb10664afbc3f43162d0ab6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layouts.mobile-app','data' => ['currentPage' => 'dashboard']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layouts.mobile-app'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['currentPage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('dashboard')]); ?>
     <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
         <!-- App Header with Logo -->
         <div class="mb-6 flex items-center justify-between">
@@ -11,13 +20,14 @@
                 <!-- App Name -->
                 <div>
                     <h1 class="text-headline-md font-bold text-primary">Tracker Kostly</h1>
-                    <p class="text-xs text-on-surface-variant">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
+                    <p class="text-xs text-on-surface-variant"><?php echo e(\Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY')); ?></p>
                 </div>
             </div>
 
             <!-- User Avatar -->
             <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold">
-                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
             </div>
         </div>
 
@@ -31,7 +41,7 @@
                     <span class="material-symbols-rounded text-xl">account_balance_wallet</span>
                     <span class="text-xs font-bold uppercase tracking-wider">Total Saldo</span>
                 </div>
-                <h3 class="text-display-currency text-white mb-6">Rp {{ number_format($balance, 0, ',', '.') }}</h3>
+                <h3 class="text-display-currency text-white mb-6">Rp <?php echo e(number_format($balance, 0, ',', '.')); ?></h3>
 
                 <!-- Income & Expense Summary -->
                 <div class="grid grid-cols-2 gap-4">
@@ -40,14 +50,14 @@
                             <span class="material-symbols-rounded text-sm">arrow_downward</span>
                             <span class="text-xs font-semibold">Pemasukan</span>
                         </div>
-                        <p class="text-white font-bold text-lg">Rp {{ number_format($totalIncome, 0, ',', '.') }}</p>
+                        <p class="text-white font-bold text-lg">Rp <?php echo e(number_format($totalIncome, 0, ',', '.')); ?></p>
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm rounded-button p-4">
                         <div class="flex items-center gap-2 text-white/70 mb-2">
                             <span class="material-symbols-rounded text-sm">arrow_upward</span>
                             <span class="text-xs font-semibold">Pengeluaran</span>
                         </div>
-                        <p class="text-white font-bold text-lg">Rp {{ number_format($totalExpense, 0, ',', '.') }}</p>
+                        <p class="text-white font-bold text-lg">Rp <?php echo e(number_format($totalExpense, 0, ',', '.')); ?></p>
                     </div>
                 </div>
             </div>
@@ -64,70 +74,74 @@
         </div>
 
         <!-- Top Categories with Color-Coded -->
-        @if($topCategories->isNotEmpty())
+        <?php if($topCategories->isNotEmpty()): ?>
             <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
                 <h3 class="text-headline-md font-semibold text-on-surface mb-4">Top Kategori Pengeluaran</h3>
                 <div class="space-y-3">
-                    @php
+                    <?php
                         $colors = ['#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe'];
-                    @endphp
-                    @foreach($topCategories as $index => $category)
+                    ?>
+                    <?php $__currentLoopData = $topCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="flex items-center gap-3 p-3 hover:bg-surface-container rounded-button transition-colors">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white" style="background: {{ $colors[$index % 5] }};">
-                                {{ $index + 1 }}
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white" style="background: <?php echo e($colors[$index % 5]); ?>;">
+                                <?php echo e($index + 1); ?>
+
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-body-lg font-semibold text-on-surface truncate">{{ $category['category_name'] }}</p>
-                                <p class="text-xs text-on-surface-variant">{{ $category['count'] }} transaksi</p>
+                                <p class="text-body-lg font-semibold text-on-surface truncate"><?php echo e($category['category_name']); ?></p>
+                                <p class="text-xs text-on-surface-variant"><?php echo e($category['count']); ?> transaksi</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-body-lg font-bold text-on-surface whitespace-nowrap">Rp {{ number_format($category['total'], 0, ',', '.') }}</p>
+                                <p class="text-body-lg font-bold text-on-surface whitespace-nowrap">Rp <?php echo e(number_format($category['total'], 0, ',', '.')); ?></p>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Recent Transactions -->
         <div class="bg-surface rounded-card p-6 shadow-card">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-headline-md font-semibold text-on-surface">Transaksi Terakhir</h3>
-                <a href="{{ route('transactions.index') }}" class="text-primary text-sm font-semibold">Lihat Semua</a>
+                <a href="<?php echo e(route('transactions.index')); ?>" class="text-primary text-sm font-semibold">Lihat Semua</a>
             </div>
-            @if($recentTransactions->isEmpty())
+            <?php if($recentTransactions->isEmpty()): ?>
                 <div class="text-center py-12">
                     <span class="material-symbols-rounded text-6xl text-on-surface-variant opacity-30">receipt_long</span>
                     <p class="mt-4 text-on-surface-variant text-body-md">Belum ada transaksi</p>
-                    <a href="{{ route('transactions.create') }}" class="mt-3 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-primary-dark transition-colors">
+                    <a href="<?php echo e(route('transactions.create')); ?>" class="mt-3 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-primary-dark transition-colors">
                         <span class="material-symbols-rounded text-lg">add</span>
                         Tambah Transaksi
                     </a>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="space-y-3">
-                    @foreach($recentTransactions as $transaction)
+                    <?php $__currentLoopData = $recentTransactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="flex items-center gap-3 p-3 hover:bg-surface-container rounded-button transition-colors">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center {{ $transaction->type === 'income' ? 'bg-success-container text-success' : 'bg-primary-container text-primary' }}">
-                                <span class="material-symbols-rounded">{{ $transaction->type === 'income' ? 'arrow_downward' : 'arrow_upward' }}</span>
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center <?php echo e($transaction->type === 'income' ? 'bg-success-container text-success' : 'bg-primary-container text-primary'); ?>">
+                                <span class="material-symbols-rounded"><?php echo e($transaction->type === 'income' ? 'arrow_downward' : 'arrow_upward'); ?></span>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-body-lg font-semibold text-on-surface truncate">
-                                    {{ $transaction->notes ?: ($transaction->category ? $transaction->category->name : 'Transaksi') }}
+                                    <?php echo e($transaction->notes ?: ($transaction->category ? $transaction->category->name : 'Transaksi')); ?>
+
                                 </p>
                                 <p class="text-xs text-on-surface-variant">
-                                    {{ $transaction->transaction_date->format('d M Y') }} - {{ $transaction->category ? $transaction->category->name : '-' }}
+                                    <?php echo e($transaction->transaction_date->format('d M Y')); ?> - <?php echo e($transaction->category ? $transaction->category->name : '-'); ?>
+
                                 </p>
                             </div>
                             <div class="text-right">
-                                <p class="text-body-lg font-bold {{ $transaction->type === 'income' ? 'text-success' : 'text-error' }} whitespace-nowrap">
-                                    {{ $transaction->type === 'income' ? '+' : '-' }} Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                <p class="text-body-lg font-bold <?php echo e($transaction->type === 'income' ? 'text-success' : 'text-error'); ?> whitespace-nowrap">
+                                    <?php echo e($transaction->type === 'income' ? '+' : '-'); ?> Rp <?php echo e(number_format($transaction->amount, 0, ',', '.')); ?>
+
                                 </p>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -138,10 +152,10 @@
             new Chart(trendCanvas.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: @json($trendChartData['labels']),
+                    labels: <?php echo json_encode($trendChartData['labels'], 15, 512) ?>,
                     datasets: [{
                         label: 'Pengeluaran',
-                        data: @json($trendChartData['data']),
+                        data: <?php echo json_encode($trendChartData['data'], 15, 512) ?>,
                         backgroundColor: 'rgba(124, 58, 237, 0.12)',
                         borderColor: 'rgba(109, 40, 217, 1)',
                         borderWidth: 3,
@@ -198,4 +212,14 @@
             });
         }
     </script>
-</x-layouts.mobile-app>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>
+<?php $attributes = $__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6; ?>
+<?php unset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>
+<?php $component = $__componentOriginal8b1a96032cb10664afbc3f43162d0ab6; ?>
+<?php unset($__componentOriginal8b1a96032cb10664afbc3f43162d0ab6); ?>
+<?php endif; ?>
+<?php /**PATH C:\Users\alfat\Favorites\asn_pemrograman_web\resources\views/dashboard.blade.php ENDPATH**/ ?>

@@ -1,4 +1,13 @@
-<x-layouts.mobile-app :currentPage="'profile'">
+<?php if (isset($component)) { $__componentOriginal8b1a96032cb10664afbc3f43162d0ab6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layouts.mobile-app','data' => ['currentPage' => 'profile']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layouts.mobile-app'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['currentPage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('profile')]); ?>
     <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
         <div class="bg-gradient-to-br from-primary to-primary-dark rounded-card p-6 mb-6 relative overflow-hidden shadow-card">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
@@ -6,21 +15,22 @@
 
             <div class="relative z-10 text-center">
                 <div class="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold mx-auto mb-3 border-4 border-white/30">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <?php echo e(strtoupper(substr($user->name, 0, 1))); ?>
+
                 </div>
-                <h3 class="text-headline-md font-bold text-white mb-1">{{ $user->name }}</h3>
-                <p class="text-white/80 text-body-md">{{ $user->email }}</p>
+                <h3 class="text-headline-md font-bold text-white mb-1"><?php echo e($user->name); ?></h3>
+                <p class="text-white/80 text-body-md"><?php echo e($user->email); ?></p>
             </div>
         </div>
 
-        @if (session('success') || session('status'))
+        <?php if(session('success') || session('status')): ?>
             <div class="bg-success-container border border-success/20 text-success px-4 py-3 rounded-card mb-4 shadow-card" role="alert">
-                <span class="block text-sm font-semibold">{{ session('success') ?: session('status') }}</span>
+                <span class="block text-sm font-semibold"><?php echo e(session('success') ?: session('status')); ?></span>
             </div>
-        @endif
+        <?php endif; ?>
 
         <div class="bg-surface rounded-card p-2 mb-4 shadow-card">
-            <a href="{{ route('categories.index') }}" class="flex items-center justify-between p-4 hover:bg-surface-container rounded-button transition-colors">
+            <a href="<?php echo e(route('categories.index')); ?>" class="flex items-center justify-between p-4 hover:bg-surface-container rounded-button transition-colors">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center">
                         <span class="material-symbols-rounded text-tertiary">category</span>
@@ -74,20 +84,20 @@
         </div>
 
         <div id="profileSection" class="hidden bg-surface rounded-card p-6 mb-4 shadow-card">
-            @include('profile.partials.update-profile-information-form')
+            <?php echo $__env->make('profile.partials.update-profile-information-form', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </div>
 
         <div id="passwordSection" class="hidden bg-surface rounded-card p-6 mb-4 shadow-card">
-            @include('profile.partials.update-password-form')
+            <?php echo $__env->make('profile.partials.update-password-form', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </div>
 
         <div id="deleteSection" class="hidden bg-surface rounded-card p-6 mb-4 shadow-card">
-            @include('profile.partials.delete-user-form')
+            <?php echo $__env->make('profile.partials.delete-user-form', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </div>
 
         <div class="bg-surface rounded-card p-4 mb-6 shadow-card">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
+            <form method="POST" action="<?php echo e(route('logout')); ?>">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-4 rounded-button hover:shadow-card-hover transition-all shadow-card flex items-center justify-center gap-2">
                     <span class="material-symbols-rounded">logout</span>
                     Logout
@@ -114,4 +124,14 @@
             section.classList.toggle('hidden');
         }
     </script>
-</x-layouts.mobile-app>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>
+<?php $attributes = $__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6; ?>
+<?php unset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>
+<?php $component = $__componentOriginal8b1a96032cb10664afbc3f43162d0ab6; ?>
+<?php unset($__componentOriginal8b1a96032cb10664afbc3f43162d0ab6); ?>
+<?php endif; ?>
+<?php /**PATH C:\Users\alfat\Favorites\asn_pemrograman_web\resources\views/profile/edit.blade.php ENDPATH**/ ?>
