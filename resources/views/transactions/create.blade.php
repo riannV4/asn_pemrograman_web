@@ -116,9 +116,9 @@
                     <select name="category_id" x-model="categoryId" 
                             class="w-full appearance-none bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                         <option value="">Pilih Kategori</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
+                        <template x-for="cat in filteredCategories()" :key="cat.id">
+                            <option :value="cat.id" x-text="cat.name" :selected="categoryId == cat.id"></option>
+                        </template>
                     </select>
                     <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
                 </div>
@@ -172,19 +172,29 @@
     <script>
         function transactionForm() {
             return {
-                inputMethod: 'manual',
-                type: 'expense',
+                inputMethod: @json(old('input_method', 'manual')),
+                type: @json(old('type', 'expense')),
                 amountDisplay: '',
-                amount: '',
-                categoryId: '',
-                transactionDate: '{{ date('Y-m-d') }}',
-                notes: '',
+                amount: @json(old('amount', '')),
+                categoryId: @json(old('category_id', '')),
+                transactionDate: @json(old('transaction_date', date('Y-m-d'))),
+                notes: @json(old('notes', '')),
                 isRecording: false,
                 voiceTranscript: '',
                 scanResult: '',
                 recognition: null,
+                categories: @json($categories),
 
                 init() {
+                    // Initialize amount display if there is an old value
+                    if (this.amount) {
+                        this.amountDisplay = this.formatNumber(this.amount);
+                    }
+                    
+                    this.$watch('type', (value) => {
+                        this.categoryId = '';
+                    });
+
                     // Initialize Web Speech API
                     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -295,21 +305,20 @@
                         'hiburan': ['hiburan', 'nonton', 'film', 'main', 'game', 'konser'],
                         'kesehatan': ['dokter', 'obat', 'rumah sakit', 'klinik', 'apotek'],
                         'pendidikan': ['buku', 'kursus', 'sekolah', 'kuliah', 'les'],
-                        'tagihan': ['listrik', 'air', 'internet', 'pulsa', 'wifi', 'token']
+                        'tagihan': ['listrik', 'air', 'internet', 'pulsa', 'wifi', 'token'],
+                        'gaji': ['gaji', 'salary', 'honor', 'upah'],
+                        'bonus': ['bonus', 'komisi', 'insentif']
                     };
                     
                     for (let [category, keywords] of Object.entries(categoryMap)) {
                         for (let keyword of keywords) {
                             if (lowerText.includes(keyword)) {
-                                // Find matching category in select options
-                                const select = document.querySelector('select[name="category_id"]');
-                                if (select) {
-                                    for (let option of select.options) {
-                                        if (option.text.toLowerCase().includes(category)) {
-                                            this.categoryId = option.value;
-                                            break;
-                                        }
-                                    }
+                                // Find matching category in the local categories list that matches current type
+                                const matchedCat = this.categories.find(c => 
+                                    c.type === this.type && c.name.toLowerCase().includes(category)
+                                );
+                                if (matchedCat) {
+                                    this.categoryId = matchedCat.id.toString();
                                 }
                                 break;
                             }
@@ -318,6 +327,10 @@
                     
                     // 4. Set notes with cleaned text
                     this.notes = text;
+                },
+                
+                filteredCategories() {
+                    return this.categories.filter(cat => cat.type === this.type);
                 },
                 
                 wordToNumber(word, numberWords) {
