@@ -13,7 +13,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Auth::user()->categories()->latest()->get();
+        $categories = Auth::user()->categories()
+            ->withCount('transactions')
+            ->latest()
+            ->get();
         
         return view('categories.index', compact('categories'));
     }
@@ -34,9 +37,19 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:50',
             'type' => 'required|in:income,expense',
+            'icon' => 'nullable|string|max:50',
+            'color' => 'nullable|string|max:7',
         ]);
 
-        Auth::user()->categories()->create($validated);
+        $category = Auth::user()->categories()->create($validated);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dibuat.',
+                'category' => $category
+            ]);
+        }
 
         return redirect()->route('categories.index')
             ->with('success', 'Kategori berhasil dibuat.');

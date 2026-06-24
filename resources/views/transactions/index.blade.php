@@ -1,187 +1,143 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Transaksi') }}
-            </h2>
-            <a href="{{ route('transactions.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Tambah Transaksi
-            </a>
+<x-layouts.mobile-app :currentPage="'transactions'">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+        @if (session('success'))
+            <div class="mb-6 bg-success-container border border-success text-success px-4 py-3 rounded-button shadow-card" role="alert">
+                <span class="block text-body-md font-semibold">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <!-- Header -->
+        <div class="mb-6">
+            <h2 class="text-headline-lg font-bold text-on-surface mb-1">Daftar Transaksi</h2>
+            <p class="text-body-md text-on-surface-variant">Riwayat transaksi kamu</p>
         </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
+        <!-- Filter Section -->
+        <div class="bg-surface rounded-card p-4 mb-6 shadow-card">
+            <form method="GET" action="{{ route('transactions.index') }}" class="space-y-4">
+                <!-- Search -->
+                <div>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari transaksi..." 
+                           class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                 </div>
+                
+                <!-- Filter Row -->
+                <div class="grid grid-cols-2 gap-3">
+                    <select name="category_id" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-0">
+                        <option value="">Semua Kategori</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    
+                    <select name="type" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-0">
+                        <option value="">Semua Tipe</option>
+                        <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Pemasukan</option>
+                        <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Pengeluaran</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-button hover:bg-primary-dark transition-colors">
+                    Filter
+                </button>
+            </form>
+        </div>
+
+        <!-- Transactions List -->
+        <div>
+            @if($transactions->isEmpty())
+                <div class="bg-surface rounded-card p-12 text-center shadow-card">
+                    <span class="material-symbols-rounded text-6xl text-on-surface-variant opacity-30">receipt_long</span>
+                    <p class="mt-4 text-on-surface-variant text-body-md">
+                        @if(request()->hasAny(['search', 'category_id', 'type']))
+                            Tidak ada transaksi yang sesuai dengan filter. 
+                            <a href="{{ route('transactions.index') }}" class="text-primary hover:underline font-semibold">Reset filter</a>
+                        @else
+                            Belum ada transaksi. Mulai catat transaksi kamu!
+                        @endif
+                    </p>
+                    <a href="{{ route('transactions.create') }}" class="mt-6 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-button font-semibold hover:bg-primary-dark transition-colors">
+                        <span class="material-symbols-rounded">add</span>
+                        Tambah Transaksi
+                    </a>
+                </div>
+            @else
+                @php
+                    $groupedTransactions = $transactions->groupBy(function($transaction) {
+                        return $transaction->transaction_date->format('Y-m-d');
+                    });
+                @endphp
+
+                @foreach($groupedTransactions as $date => $dateTransactions)
+                    <div class="mb-6">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">
+                            {{ \Carbon\Carbon::parse($date)->isoFormat('dddd, D MMMM YYYY') }}
+                        </h4>
+                        
+                        <div class="bg-surface rounded-card p-2 shadow-card space-y-1">
+                            @foreach($dateTransactions as $transaction)
+                                <div class="flex items-center gap-3 p-3 hover:bg-surface-container rounded-button transition-colors">
+                                    <!-- Icon -->
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $transaction->type === 'income' ? 'bg-success-container text-success' : 'bg-primary-container text-primary' }}">
+                                        @php
+                                            $categoryIcons = [
+                                                'makanan' => 'restaurant', 'food' => 'restaurant', 'makan' => 'restaurant',
+                                                'transportasi' => 'directions_bike', 'transport' => 'directions_bike',
+                                                'laundry' => 'local_laundry_service', 'kopi' => 'coffee', 'coffee' => 'coffee',
+                                                'entertainment' => 'sports_esports', 'hiburan' => 'sports_esports',
+                                                'belanja' => 'shopping_cart', 'shopping' => 'shopping_cart',
+                                                'gaji' => 'account_balance_wallet', 'salary' => 'account_balance_wallet',
+                                                'cashback' => 'account_balance_wallet',
+                                            ];
+                                            $icon = $transaction->type === 'income' ? 'arrow_downward' : 'arrow_upward';
+                                            if ($transaction->category) {
+                                                $categoryLower = strtolower($transaction->category->name);
+                                                foreach($categoryIcons as $key => $value) {
+                                                    if(str_contains($categoryLower, $key)) {
+                                                        $icon = $value;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        <span class="material-symbols-rounded">{{ $icon }}</span>
+                                    </div>
+
+                                    <!-- Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-body-lg font-semibold text-on-surface truncate">
+                                            {{ Str::limit($transaction->notes ?: ($transaction->category ? $transaction->category->name : 'Transaksi'), 40) }}
+                                        </p>
+                                        <p class="text-xs text-on-surface-variant flex items-center gap-1">
+                                            @if($transaction->category)
+                                                <span class="truncate">{{ $transaction->category->name }}</span>
+                                            @else
+                                                <span class="truncate">Tanpa Kategori</span>
+                                            @endif
+                                            <span>•</span>
+                                            <span class="capitalize">{{ $transaction->input_method }}</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Amount -->
+                                    <div class="text-right shrink-0">
+                                        <p class="text-body-lg font-bold {{ $transaction->type === 'income' ? 'text-success' : 'text-error' }} whitespace-nowrap">
+                                            {{ $transaction->type === 'income' ? '+' : '-' }} Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Edit Button -->
+                                    <a href="{{ route('transactions.edit', $transaction) }}" class="w-9 h-9 rounded-full hover:bg-primary-container flex items-center justify-center text-primary transition-colors shrink-0">
+                                        <span class="material-symbols-rounded text-xl">edit</span>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
             @endif
-
-            <!-- Filter Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4">Filter & Pencarian</h3>
-                    <form method="GET" action="{{ route('transactions.index') }}" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Search -->
-                            <div>
-                                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari</label>
-                                <input type="text"
-                                       name="search"
-                                       id="search"
-                                       value="{{ request('search') }}"
-                                       placeholder="Cari catatan atau kategori..."
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <!-- Category Filter -->
-                            <div>
-                                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                                <select name="category_id"
-                                        id="category_id"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }} ({{ $category->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Type Filter -->
-                            <div>
-                                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
-                                <select name="type"
-                                        id="type"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="">Semua Tipe</option>
-                                    <option value="income" {{ request('type') === 'income' ? 'selected' : '' }}>Pemasukan</option>
-                                    <option value="expense" {{ request('type') === 'expense' ? 'selected' : '' }}>Pengeluaran</option>
-                                </select>
-                            </div>
-
-                            <!-- Start Date -->
-                            <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                                <input type="date"
-                                       name="start_date"
-                                       id="start_date"
-                                       value="{{ request('start_date') }}"
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <!-- End Date -->
-                            <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
-                                <input type="date"
-                                       name="end_date"
-                                       id="end_date"
-                                       value="{{ request('end_date') }}"
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <!-- Buttons -->
-                            <div class="flex items-end gap-2">
-                                <button type="submit"
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Filter
-                                </button>
-                                <a href="{{ route('transactions.index') }}"
-                                   class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                    Reset
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    @if($transactions->isEmpty())
-                        <p class="text-gray-500">
-                            @if(request()->hasAny(['search', 'category_id', 'type', 'start_date', 'end_date']))
-                                Tidak ada transaksi yang sesuai dengan filter. <a href="{{ route('transactions.index') }}" class="text-blue-500 hover:underline">Reset filter</a>
-                            @else
-                                Belum ada transaksi. Silakan tambahkan transaksi baru.
-                            @endif
-                        </p>
-                    @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tanggal
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Kategori
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tipe
-                                        </th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Jumlah
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Catatan
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Metode Input
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($transactions as $transaction)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $transaction->transaction_date->format('d M Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $transaction->category ? $transaction->category->name : '-' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    {{ $transaction->type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                    {{ $transaction->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
-                                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
-                                            </td>
-                                            <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                                                {{ $transaction->notes ?? '-' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                                                {{ $transaction->input_method }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <div class="flex gap-2">
-                                                    <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-600 hover:text-blue-900">
-                                                        Edit
-                                                    </a>
-                                                    <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900">
-                                                            Hapus
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                </div>
-            </div>
         </div>
     </div>
-</x-app-layout>
+</x-layouts.mobile-app>

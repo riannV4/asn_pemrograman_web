@@ -1,13 +1,9 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Kategori') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+<x-layouts.mobile-app :currentPage="'profile'">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h2 class="text-headline-lg font-bold text-on-surface">Edit Kategori</h2>
+        </div>
                 <div class="p-6 text-gray-900">
                     <form method="POST" action="{{ route('categories.update', $category) }}">
                         @csrf
@@ -62,4 +58,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-layouts.mobile-app>

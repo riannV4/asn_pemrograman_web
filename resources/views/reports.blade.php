@@ -1,224 +1,158 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Reports') }}
-        </h2>
-    </x-slot>
+<x-layouts.mobile-app :currentPage="'reports'">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h2 class="text-headline-lg font-bold text-on-surface mb-1">Laporan Keuangan</h2>
+            <p class="text-body-md text-on-surface-variant">Analisis pengeluaran dan pemasukan kamu</p>
+        </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <!-- Filter Card -->
+        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+            <h3 class="text-headline-md font-semibold text-on-surface mb-4">Filter Periode</h3>
+            <form method="GET" action="{{ route('reports') }}" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Pilih Periode</label>
+                    <select id="filter" name="filter" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0" onchange="toggleCustomDate(this.value)">
+                        <option value="weekly" {{ $filterType === 'weekly' ? 'selected' : '' }}>Mingguan</option>
+                        <option value="monthly" {{ $filterType === 'monthly' ? 'selected' : '' }}>Bulanan</option>
+                        <option value="custom" {{ $filterType === 'custom' ? 'selected' : '' }}>Custom</option>
+                    </select>
+                </div>
 
-            <!-- Filter Form -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Filter Periode</h3>
-                    <form method="GET" action="{{ route('reports') }}" class="space-y-4">
-                        <!-- Filter Type -->
-                        <div>
-                            <label for="filter" class="block text-sm font-medium text-gray-700 mb-2">
-                                Pilih Periode
-                            </label>
-                            <select id="filter"
-                                    name="filter"
-                                    class="block w-full md:w-64 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                    onchange="toggleCustomDate(this.value)">
-                                <option value="weekly" {{ $filterType === 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                <option value="monthly" {{ $filterType === 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                <option value="custom" {{ $filterType === 'custom' ? 'selected' : '' }}>Custom Date Range</option>
-                            </select>
-                        </div>
+                <div id="custom-date-range" class="{{ $filterType === 'custom' ? '' : 'hidden' }} space-y-3">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Mulai</label>
+                        <input type="date" id="start_date" name="start_date" value="{{ $filterType === 'custom' && $startDate ? $startDate->format('Y-m-d') : '' }}" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Akhir</label>
+                        <input type="date" id="end_date" name="end_date" value="{{ $filterType === 'custom' && $endDate ? $endDate->format('Y-m-d') : '' }}" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
+                    </div>
+                </div>
 
-                        <!-- Custom Date Range -->
-                        <div id="custom-date-range" class="{{ $filterType === 'custom' ? '' : 'hidden' }} space-y-4 md:space-y-0 md:flex md:gap-4">
-                            <div class="flex-1">
-                                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Tanggal Mulai
-                                </label>
-                                <input type="date"
-                                       id="start_date"
-                                       name="start_date"
-                                       value="{{ $filterType === 'custom' && $startDate ? $startDate->format('Y-m-d') : '' }}"
-                                       class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-button hover:shadow-card-hover transition-all shadow-card">
+                    Terapkan Filter
+                </button>
+            </form>
+            
+            <div class="mt-4 text-xs text-on-surface-variant text-center">
+                Periode: <span class="font-semibold">{{ $startDate->format('d M Y') }}</span> - <span class="font-semibold">{{ $endDate->format('d M Y') }}</span>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-gradient-to-br from-primary to-primary-dark rounded-card p-4 text-white shadow-card">
+                <div class="flex items-center gap-2 mb-2 opacity-90">
+                    <span class="material-symbols-rounded text-lg">account_balance_wallet</span>
+                    <span class="text-xs font-semibold">Saldo</span>
+                </div>
+                <div class="text-xl font-bold">Rp {{ number_format($balance, 0, ',', '.') }}</div>
+            </div>
+
+            <div class="bg-gradient-to-br from-success to-green-600 rounded-card p-4 text-white shadow-card">
+                <div class="flex items-center gap-2 mb-2 opacity-90">
+                    <span class="material-symbols-rounded text-lg">arrow_downward</span>
+                    <span class="text-xs font-semibold">Masuk</span>
+                </div>
+                <div class="text-xl font-bold">Rp {{ number_format($totalIncome, 0, ',', '.') }}</div>
+            </div>
+
+            <div class="bg-gradient-to-br from-error to-red-600 rounded-card p-4 text-white shadow-card">
+                <div class="flex items-center gap-2 mb-2 opacity-90">
+                    <span class="material-symbols-rounded text-lg">arrow_upward</span>
+                    <span class="text-xs font-semibold">Keluar</span>
+                </div>
+                <div class="text-xl font-bold">Rp {{ number_format($totalExpense, 0, ',', '.') }}</div>
+            </div>
+        </div>
+
+        <!-- Donut Chart with Percentage in Center -->
+        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+            <h3 class="text-headline-md font-semibold text-on-surface mb-4">Pengeluaran per Kategori</h3>
+            @if(empty($pieChartData['labels']))
+                <div class="text-center py-12">
+                    <span class="material-symbols-rounded text-6xl text-on-surface-variant opacity-30">pie_chart</span>
+                    <p class="mt-4 text-on-surface-variant">Tidak ada data pengeluaran</p>
+                </div>
+            @else
+                <div style="position: relative; height: 280px;" class="mb-4">
+                    <canvas id="donutChart"></canvas>
+                </div>
+                
+                <!-- Color-coded Category List -->
+                <div class="space-y-3">
+                    @php
+                        $categoryColors = ['#7c3aed', '#ec4899', '#f97316', '#10b981', '#3b82f6', '#eab308', '#8b5cf6', '#14b8a6'];
+                    @endphp
+                    @foreach($pieChartData['labels'] as $index => $label)
+                        <div class="flex items-center justify-between p-3 bg-surface-container rounded-button">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full" style="background-color: {{ $categoryColors[$index % 8] }}"></div>
+                                <span class="text-body-lg font-semibold text-on-surface">{{ $label }}</span>
                             </div>
-                            <div class="flex-1">
-                                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Tanggal Akhir
-                                </label>
-                                <input type="date"
-                                       id="end_date"
-                                       name="end_date"
-                                       value="{{ $filterType === 'custom' && $endDate ? $endDate->format('Y-m-d') : '' }}"
-                                       class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <div class="text-right">
+                                <p class="text-body-lg font-bold text-on-surface">Rp {{ number_format($pieChartData['data'][$index], 0, ',', '.') }}</p>
+                                <p class="text-xs text-on-surface-variant">
+                                    {{ round(($pieChartData['data'][$index] / array_sum($pieChartData['data'])) * 100, 1) }}%
+                                </p>
                             </div>
                         </div>
-
-                        <div>
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Tampilkan Report
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- Current Period Display -->
-                    <div class="mt-4 text-sm text-gray-600">
-                        Periode: <span class="font-semibold">{{ $startDate->format('d M Y') }}</span> s/d <span class="font-semibold">{{ $endDate->format('d M Y') }}</span>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
+        </div>
 
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Balance -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm font-medium text-gray-500 uppercase">
-                            Balance
-                        </div>
-                        <div class="mt-2 text-3xl font-bold {{ $balance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            Rp {{ number_format($balance, 0, ',', '.') }}
-                        </div>
-                    </div>
+        <!-- Daily Trend Chart -->
+        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+            <h3 class="text-headline-md font-semibold text-on-surface mb-4">Tren Pengeluaran Harian</h3>
+            @if(empty($dailyExpenseTrend['labels']))
+                <div class="text-center py-12">
+                    <span class="material-symbols-rounded text-6xl text-on-surface-variant opacity-30">show_chart</span>
+                    <p class="mt-4 text-on-surface-variant">Tidak ada data tren</p>
                 </div>
-
-                <!-- Total Income -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm font-medium text-gray-500 uppercase">
-                            Total Income
-                        </div>
-                        <div class="mt-2 text-3xl font-bold text-green-600">
-                            Rp {{ number_format($totalIncome, 0, ',', '.') }}
-                        </div>
-                    </div>
+            @else
+                <div style="position: relative; height: 250px;">
+                    <canvas id="trendChart"></canvas>
                 </div>
+            @endif
+        </div>
 
-                <!-- Total Expense -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm font-medium text-gray-500 uppercase">
-                            Total Expense
-                        </div>
-                        <div class="mt-2 text-3xl font-bold text-red-600">
-                            Rp {{ number_format($totalExpense, 0, ',', '.') }}
-                        </div>
-                    </div>
+        <!-- Transaction List -->
+        <div class="bg-surface rounded-card p-6 shadow-card">
+            <h3 class="text-headline-md font-semibold text-on-surface mb-4">Daftar Transaksi</h3>
+            @if($transactions->isEmpty())
+                <div class="text-center py-12">
+                    <span class="material-symbols-rounded text-6xl text-on-surface-variant opacity-30">receipt_long</span>
+                    <p class="mt-4 text-on-surface-variant">Belum ada transaksi</p>
                 </div>
-            </div>
-
-            <!-- Charts Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- Pie Chart - Expense by Category -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                            Pengeluaran per Kategori
-                        </h3>
-                        @if(empty($pieChartData['labels']))
-                            <p class="text-gray-500">Tidak ada data pengeluaran</p>
-                        @else
-                            <div style="position: relative; height: 300px;">
-                                <canvas id="pieChart"></canvas>
+            @else
+                <div class="space-y-2">
+                    @foreach($transactions as $transaction)
+                        <div class="flex items-center gap-3 p-3 hover:bg-surface-container rounded-button transition-colors">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $transaction->type === 'income' ? 'bg-success-container text-success' : 'bg-error-container text-error' }}">
+                                <span class="material-symbols-rounded text-sm">{{ $transaction->type === 'income' ? 'arrow_downward' : 'arrow_upward' }}</span>
                             </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Daily Expense Trend - Line Chart -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                            Tren Pengeluaran Harian
-                        </h3>
-                        @if(empty($dailyExpenseTrend['labels']))
-                            <p class="text-gray-500">Tidak ada data pengeluaran harian</p>
-                        @else
-                            <div style="position: relative; height: 300px;">
-                                <canvas id="trendChart"></canvas>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-body-lg font-semibold text-on-surface truncate">
+                                    {{ $transaction->category ? $transaction->category->name : 'Transaksi' }}
+                                </p>
+                                <p class="text-xs text-on-surface-variant">
+                                    {{ $transaction->transaction_date->format('d M Y') }}
+                                </p>
                             </div>
-                        @endif
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Bar Chart - Income vs Expense per Month -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                        Income vs Expense per Bulan (Tahun {{ date('Y') }})
-                    </h3>
-                    <div style="position: relative; height: 350px;">
-                        <canvas id="barChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Transaction List -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                        Daftar Transaksi
-                    </h3>
-                    @if($transactions->isEmpty())
-                        <p class="text-gray-500">Belum ada transaksi</p>
-                    @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tanggal
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Kategori
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tipe
-                                        </th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nominal
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Catatan
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($transactions as $transaction)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $transaction->transaction_date->format('d M Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $transaction->category ? $transaction->category->name : '-' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $transaction->type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                    {{ $transaction->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
-                                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
-                                            </td>
-                                            <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                                                {{ $transaction->notes ?? '-' }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="text-right">
+                                <p class="text-body-lg font-bold {{ $transaction->type === 'income' ? 'text-success' : 'text-error' }}">
+                                    {{ $transaction->type === 'income' ? '+' : '-' }} Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                </p>
+                            </div>
                         </div>
-                    @endif
+                    @endforeach
                 </div>
-            </div>
-
+            @endif
         </div>
     </div>
 
-    <!-- Chart.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         function toggleCustomDate(value) {
             const customDateRange = document.getElementById('custom-date-range');
@@ -229,35 +163,73 @@
             }
         }
 
-        // Pie Chart - Expense by Category
+        // Donut Chart with Center Text Plugin
+        const centerTextPlugin = {
+            id: 'centerText',
+            afterDatasetsDraw(chart) {
+                const { ctx, chartArea: { width, height } } = chart;
+                ctx.save();
+                
+                const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                const centerX = width / 2;
+                const centerY = height / 2;
+                
+                // Draw total text
+                ctx.font = 'bold 20px Plus Jakarta Sans';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Total', centerX, centerY - 15);
+                
+                ctx.font = 'bold 18px Plus Jakarta Sans';
+                ctx.fillStyle = '#7c3aed';
+                ctx.fillText('Rp ' + (total / 1000).toFixed(0) + 'k', centerX, centerY + 15);
+                
+                ctx.restore();
+            }
+        };
+
+        // Donut Chart - Expense by Category
         @if(!empty($pieChartData['labels']))
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            new Chart(pieCtx, {
+            const donutCtx = document.getElementById('donutChart').getContext('2d');
+            new Chart(donutCtx, {
                 type: 'doughnut',
                 data: {
                     labels: @json($pieChartData['labels']),
                     datasets: [{
                         data: @json($pieChartData['data']),
-                        backgroundColor: @json($pieChartData['colors']),
+                        backgroundColor: ['#7c3aed', '#ec4899', '#f97316', '#10b981', '#3b82f6', '#eab308', '#8b5cf6', '#14b8a6'],
                         borderColor: '#fff',
-                        borderWidth: 2
+                        borderWidth: 3,
+                        hoverOffset: 10
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%',
                     plugins: {
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                font: {
-                                    size: 12
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(124, 58, 237, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            borderRadius: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return context.label + ': Rp ' + context.parsed.toLocaleString('id-ID') + ' (' + percentage + '%)';
                                 }
                             }
                         }
                     }
-                }
+                },
+                plugins: [centerTextPlugin]
             });
         @endif
 
@@ -269,18 +241,18 @@
                 data: {
                     labels: @json($dailyExpenseTrend['labels']),
                     datasets: [{
-                        label: 'Pengeluaran Harian (Rp)',
+                        label: 'Pengeluaran',
                         data: @json($dailyExpenseTrend['data']),
-                        borderColor: 'rgba(239, 68, 68, 1)',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        borderWidth: 2,
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        borderWidth: 3,
                         fill: true,
                         tension: 0.4,
-                        pointRadius: 5,
-                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                        pointRadius: 6,
+                        pointBackgroundColor: '#7c3aed',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointHoverRadius: 7
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
@@ -288,69 +260,42 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: true,
-                            position: 'top'
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(124, 58, 237, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            borderRadius: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
                             ticks: {
                                 callback: function(value) {
-                                    return 'Rp' + value.toLocaleString('id-ID');
+                                    return 'Rp ' + (value / 1000) + 'k';
                                 }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
                             }
                         }
                     }
                 }
             });
         @endif
-
-        // Bar Chart - Income vs Expense
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: @json($barChartData['labels']),
-                datasets: [
-                    {
-                        label: 'Pemasukan (Rp)',
-                        data: @json($barChartData['income']),
-                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-                        borderColor: 'rgba(22, 163, 74, 1)',
-                        borderWidth: 1.5,
-                        borderRadius: 5
-                    },
-                    {
-                        label: 'Pengeluaran (Rp)',
-                        data: @json($barChartData['expense']),
-                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                        borderColor: 'rgba(220, 38, 38, 1)',
-                        borderWidth: 1.5,
-                        borderRadius: 5
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp' + value.toLocaleString('id-ID');
-                            }
-                        }
-                    }
-                }
-            }
-        });
     </script>
-</x-app-layout>
+</x-layouts.mobile-app>
