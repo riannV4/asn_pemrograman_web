@@ -150,22 +150,10 @@
 
             <!-- Submit Button -->
             <button type="submit" 
-                    @click="console.log('Form data:', {type: type, amount: amount, categoryId: categoryId, transactionDate: transactionDate, inputMethod: inputMethod})"
                     class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-4 rounded-button shadow-card flex items-center justify-center gap-2 hover:shadow-card-hover transition-all">
                 <span class="material-symbols-rounded">check</span>
                 <span x-text="amount ? 'Simpan Transaksi' : 'Masukkan Nominal Terlebih Dahulu'"></span>
             </button>
-            
-            <!-- Debug Info (remove in production) -->
-            <div class="mt-4 p-4 bg-surface rounded-button text-xs text-on-surface-variant" x-show="false">
-                <p><strong>Debug:</strong></p>
-                <p>Amount: <span x-text="amount"></span></p>
-                <p>Amount Display: <span x-text="amountDisplay"></span></p>
-                <p>Type: <span x-text="type"></span></p>
-                <p>Category: <span x-text="categoryId"></span></p>
-                <p>Date: <span x-text="transactionDate"></span></p>
-                <p>Input Method: <span x-text="inputMethod"></span></p>
-            </div>
         </form>
     </div>
 
@@ -388,16 +376,6 @@
                         alert('Mohon pilih tanggal transaksi!');
                         return false;
                     }
-
-                    // Log for debugging
-                    console.log('Submitting form with data:', {
-                        type: this.type,
-                        amount: this.amount,
-                        categoryId: this.categoryId,
-                        transactionDate: this.transactionDate,
-                        inputMethod: this.inputMethod,
-                        notes: this.notes
-                    });
 
                     return true;
                 }

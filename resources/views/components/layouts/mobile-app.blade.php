@@ -1,3 +1,4 @@
+@props(['currentPage' => 'dashboard'])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -25,9 +26,6 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        
-        <!-- Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     </head>
     <body class="font-sans antialiased bg-background">
         <div class="min-h-screen pb-16" x-data="appState()">
@@ -61,5 +59,6 @@
                 }
             }
         </script>
+        @stack('scripts')
     </body>
 </html>

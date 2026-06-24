@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Traits\HasChartColors;
 
 class DashboardController extends Controller
 {
+    use HasChartColors;
+
     public function index()
     {
         $user = Auth::user();
@@ -16,31 +18,32 @@ class DashboardController extends Controller
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
         
-        // 1. Summary Cards - Total Income & Expense Bulan Ini
-        $totalIncome = $user->transactions()
-            ->where('type', 'income')
-            ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
-            ->sum('amount');
+        // 1. Summary Cards - Total Income & Expense Bulan Ini (aggregated in 1 query)
+        $monthlySums = $user->transactions()
+            ->selectRaw("SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income")
+            ->selectRaw("SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense")
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->first();
         
-        $totalExpense = $user->transactions()
-            ->where('type', 'expense')
-            ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
-            ->sum('amount');
+        $totalIncome = $monthlySums->income ?? 0;
+        $totalExpense = $monthlySums->expense ?? 0;
 
-        $totalIncomeAll = $user->transactions()
-            ->where('type', 'income')
-            ->sum('amount');
+        // Total Income & Expense All Time (aggregated in 1 query)
+        $allTimeSums = $user->transactions()
+            ->selectRaw("SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income")
+            ->selectRaw("SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense")
+            ->first();
 
-        $totalExpenseAll = $user->transactions()
-            ->where('type', 'expense')
-            ->sum('amount');
+        $totalIncomeAll = $allTimeSums->income ?? 0;
+        $totalExpenseAll = $allTimeSums->expense ?? 0;
         
         $balance = $totalIncomeAll - $totalExpenseAll;
         
-        // 2. Grafik Tren Pengeluaran Per Minggu (Bulan Berjalan)
+        // 2. Grafik Tren Pengeluaran Per Minggu (Bulan Berjalan) - optimized select
         $expenses = $user->transactions()
+            ->select('transaction_date', 'amount')
             ->where('type', 'expense')
-            ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
             ->get();
         
         // Kelompokkan pengeluaran berdasarkan minggu
@@ -75,42 +78,51 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
         
-        // 4. Breakdown Pengeluaran per Kategori (Bulan Ini)
+        // 4. Breakdown Pengeluaran per Kategori (Bulan Ini) - fully aggregated in DB to prevent N+1 and PHP memory overhead
         $categoryBreakdown = $user->transactions()
+            ->selectRaw('category_id, SUM(amount) as total, COUNT(*) as count')
             ->where('type', 'expense')
-            ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->groupBy('category_id')
             ->with('category')
             ->get()
-            ->groupBy('category_id')
-            ->map(function ($transactions) {
+            ->map(function ($item) {
                 return [
-                    'category_name' => $transactions->first()->category?->name ?? 'Uncategorized',
-                    'total' => $transactions->sum('amount'),
-                    'count' => $transactions->count()
+                    'category_name' => $item->category?->name ?? 'Tanpa Kategori',
+                    'total' => (float) $item->total,
+                    'count' => (int) $item->count
                 ];
             })
             ->sortByDesc('total')
             ->values();
         
-        // 5. Trend Pengeluaran Harian (Last 7 Days)
+        // 5. Trend Pengeluaran Harian (Last 7 Days) - aggregated in DB
         $dailyExpenses = $user->transactions()
+            ->selectRaw('transaction_date, SUM(amount) as total')
             ->where('type', 'expense')
-            ->whereBetween('transaction_date', [Carbon::now()->subDays(7), Carbon::now()])
+            ->whereBetween('transaction_date', [Carbon::now()->subDays(6)->toDateString(), Carbon::now()->toDateString()])
+            ->groupBy('transaction_date')
             ->get()
-            ->groupBy(function ($transaction) {
-                return Carbon::parse($transaction->transaction_date)->format('Y-m-d');
-            })
-            ->map(function ($transactions) {
-                return $transactions->sum('amount');
-            });
+            ->pluck('total', 'transaction_date')
+            ->toArray();
         
         // Pastikan semua 7 hari ada
         $dailyTrend = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $date = Carbon::now()->subDays($i)->toDateString();
+            $formattedDate = Carbon::parse($date)->format('d M');
+            
+            $amount = 0;
+            foreach ($dailyExpenses as $dbDate => $total) {
+                if (Carbon::parse($dbDate)->toDateString() === $date) {
+                    $amount = (float) $total;
+                    break;
+                }
+            }
+            
             $dailyTrend[] = [
-                'date' => Carbon::parse($date)->format('d M'),
-                'amount' => $dailyExpenses[$date] ?? 0
+                'date' => $formattedDate,
+                'amount' => $amount
             ];
         }
         
@@ -141,19 +153,5 @@ class DashboardController extends Controller
             'trendChartData',
             'dailyTrend'
         ));
-    }
-    
-    /**
-     * Generate random colors for charts
-     */
-    private function generateColors($count)
-    {
-        $colors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-            '#36A2EB', '#FFCE56', '#FF9F40', '#C9CBCF', '#4BC0C0'
-        ];
-        
-        return array_slice($colors, 0, $count);
     }
 }

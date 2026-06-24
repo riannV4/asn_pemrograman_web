@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use App\Traits\HasChartColors;
+
 class ReportController extends Controller
 {
+    use HasChartColors;
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -194,20 +197,5 @@ class ReportController extends Controller
         ));
     }
 
-    private function generateColors($count)
-    {
-        $colors = [
-            '#005a71', // primary
-            '#ffb86f', // orange
-            '#81d1f0', // light blue
-            '#bec8cd', // gray-blue
-            '#dae2fd', // soft indigo
-            '#ffdcbd', // light orange
-            '#bec6e0', // slate blue
-            '#ffe8d6', // cream orange
-            '#ba1a1a', // red
-        ];
 
-        return array_slice($colors, 0, $count);
-    }
 }

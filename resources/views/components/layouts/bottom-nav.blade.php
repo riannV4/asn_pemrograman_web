@@ -5,8 +5,8 @@
         <div class="flex items-center justify-around h-16">
             <!-- Beranda -->
             <a href="{{ route('dashboard') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'dashboard' ? 'text-primary' : 'text-on-surface-variant' }}">
-                <span class="material-symbols-rounded text-2xl" style="{{ $current === 'dashboard' ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
+               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ ($current === 'dashboard' || $current === 'transactions') ? 'text-primary' : 'text-on-surface-variant' }}">
+                <span class="material-symbols-rounded text-2xl" style="{{ ($current === 'dashboard' || $current === 'transactions') ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
                     grid_view
                 </span>
                 <span class="text-xs mt-1 font-medium">Beranda</span>

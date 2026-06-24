@@ -322,7 +322,7 @@
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Menyimpan...';
+            submitBtn.innerHTML = '<span class="material-symbols-rounded animate-spin">progress_activity</span> Menyimpan...';
 
             const formData = new FormData(event.target);
             
@@ -355,7 +355,7 @@
                 alert('Terjadi kesalahan. Silakan coba lagi.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Simpan Kategori';
+                submitBtn.innerHTML = '<span class="material-symbols-rounded">check_circle</span> Simpan Kategori';
             }
         }
 
@@ -371,7 +371,7 @@
             const categoryHtml = `
                 <div class="card-shadow bg-white rounded-[24px] p-4 flex items-center gap-4 hover:scale-[1.02] transition-all" data-category-id="${category.id}">
                     <div class="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style="background-color: ${category.color}20;">
-                        <span class="material-symbols-outlined text-2xl" style="color: ${category.color};">
+                        <span class="material-symbols-rounded text-2xl" style="color: ${category.color};">
                             ${category.icon}
                         </span>
                     </div>
@@ -388,7 +388,7 @@
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
-                            <span class="material-symbols-outlined">delete</span>
+                            <span class="material-symbols-rounded">delete</span>
                         </button>
                     </form>
                 </div>

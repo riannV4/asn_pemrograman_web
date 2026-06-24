@@ -131,6 +131,8 @@
         </div>
     </div>
 
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         const trendCanvas = document.getElementById('dailyTrendChart');
 
@@ -198,4 +200,5 @@
             });
         }
     </script>
+    @endpush
 </x-layouts.mobile-app>

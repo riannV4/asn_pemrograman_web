@@ -137,6 +137,11 @@
                         </div>
                     </div>
                 @endforeach
+
+                <!-- Pagination Links -->
+                <div class="mt-6 flex justify-center">
+                    {{ $transactions->links() }}
+                </div>
             @endif
         </div>
     </div>

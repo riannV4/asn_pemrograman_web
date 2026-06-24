@@ -4,7 +4,7 @@
             <!-- Header with Back Button -->
             <div class="mb-6 flex items-center gap-4">
                 <a href="{{ route('transactions.index') }}" class="w-10 h-10 rounded-full hover:bg-surface-container flex items-center justify-center transition-colors">
-                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span class="material-symbols-rounded">arrow_back</span>
                 </a>
                 <div>
                     <h2 class="font-headline-lg text-headline-lg text-primary">Edit Transaksi</h2>
@@ -59,7 +59,7 @@
                                         <option :value="cat.id" x-text="cat.name" :selected="categoryId == cat.id"></option>
                                     </template>
                                 </select>
-                                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
                             </div>
                             @error('category_id')
                                 <p class="text-sm text-error mt-2">{{ $message }}</p>
@@ -77,7 +77,6 @@
                         <input type="text" name="notes" x-model="notes" placeholder="Tulis detail transaksi..." class="w-full bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
                     </div>
  
-                    <input type="hidden" name="input_method" :value="inputMethod">
  
                     <!-- Submit Buttons -->
                     <div class="flex gap-3">
@@ -99,7 +98,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-3 rounded-2xl hover:scale-[1.02] transition-all card-shadow flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined">delete</span>
+                        <span class="material-symbols-rounded">delete</span>
                         Hapus Transaksi
                     </button>
                 </form>

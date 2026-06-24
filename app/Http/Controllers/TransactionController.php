@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\StoreTransactionRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 
 class TransactionController extends Controller
 {
@@ -46,7 +49,8 @@ class TransactionController extends Controller
 
         $transactions = $query->latest('transaction_date')
             ->latest('created_at')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         $categories = Auth::user()->categories()->orderBy('name')->get();
 
@@ -66,53 +70,21 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTransactionRequest $request)
     {
-        $validated = $request->validate([
-            'type' => 'required|in:income,expense',
-            'category_id' => [
-                'nullable',
-                'exists:categories,id',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($value) {
-                        $category = Auth::user()->categories()->find($value);
-                        if (!$category) {
-                            $fail('Kategori tidak valid.');
-                        } elseif ($category->type !== $request->input('type')) {
-                            $fail('Kategori yang dipilih tidak sesuai dengan jenis transaksi.');
-                        }
-                    }
-                }
-            ],
-            'amount' => 'required|numeric|min:0',
-            'transaction_date' => 'required|date',
-            'notes' => 'nullable|string',
-            'input_method' => 'required|in:manual,voice,scan',
-        ]);
-
-        Auth::user()->transactions()->create($validated);
+        Auth::user()->transactions()->create($request->validated());
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil dibuat.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Transaction $transaction)
     {
-        // Pastikan transaksi milik user yang sedang login
-        if ($transaction->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('update', $transaction);
 
         $categories = Auth::user()->categories()->orderBy('name')->get();
         
@@ -122,36 +94,11 @@ class TransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $transaction)
+    public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        // Pastikan transaksi milik user yang sedang login
-        if ($transaction->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('update', $transaction);
 
-        $validated = $request->validate([
-            'type' => 'required|in:income,expense',
-            'category_id' => [
-                'nullable',
-                'exists:categories,id',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($value) {
-                        $category = Auth::user()->categories()->find($value);
-                        if (!$category) {
-                            $fail('Kategori tidak valid.');
-                        } elseif ($category->type !== $request->input('type')) {
-                            $fail('Kategori yang dipilih tidak sesuai dengan jenis transaksi.');
-                        }
-                    }
-                }
-            ],
-            'amount' => 'required|numeric|min:0',
-            'transaction_date' => 'required|date',
-            'notes' => 'nullable|string',
-            'input_method' => 'required|in:manual,voice,scan',
-        ]);
-
-        $transaction->update($validated);
+        $transaction->update($request->validated());
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil diperbarui.');
@@ -162,10 +109,7 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        // Pastikan transaksi milik user yang sedang login
-        if ($transaction->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('delete', $transaction);
 
         $transaction->delete();
 
