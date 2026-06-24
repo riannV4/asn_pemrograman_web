@@ -23,7 +23,7 @@
 
 - **Framework**: [Laravel 11](https://laravel.com) - PHP web framework yang powerful dan elegant
 - **PHP**: 8.2+ - Server-side programming language
-- **Database**: SQLite / MySQL - Untuk penyimpanan data relasional
+- **Database**: PostgreSQL - database relasional
 - **Composer**: Dependency manager untuk PHP
 
 ### Frontend

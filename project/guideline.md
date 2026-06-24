@@ -9,7 +9,7 @@ trustworthy
 
 ## Colors
 
-Primary : #7531e3
+Primary : #014e3d
 Background : #F8FAFC
 Surface : #FFFFFF
 Text main : #0F172A
