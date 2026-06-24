@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     <title>Tracker Kostly - Kelola Uang Kost dengan Mudah</title>
 
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
     <style>
         /* Custom Button Styles */
@@ -107,7 +107,7 @@
             
             <!-- CTA Button (Single - Elevated Card) -->
             <div class="flex justify-center px-4">
-                <a href="{{ route('login') }}" class="btn-elevated">
+                <a href="<?php echo e(route('login')); ?>" class="btn-elevated">
                     Mulai Sekarang
                 </a>
             </div>
@@ -172,9 +172,10 @@
                 <span class="font-bold text-primary">Tracker Kostly</span>
             </div>
             <p class="text-on-surface-variant text-sm">
-                © {{ date('Y') }} Tracker Kostly. Semua hak dilindungi.
+                © <?php echo e(date('Y')); ?> Tracker Kostly. Semua hak dilindungi.
             </p>
         </div>
     </footer>
 </body>
 </html>
+<?php /**PATH D:\projekpemro\asn_pemrograman_web\resources\views/welcome.blade.php ENDPATH**/ ?>
