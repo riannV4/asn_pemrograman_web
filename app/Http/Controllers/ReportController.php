@@ -56,6 +56,31 @@ class ReportController extends Controller
         
         $balance = $totalIncome - $totalExpense;
         
+        // Calculate previous period for trend comparison
+        $periodDays = $endDate->diffInDays($startDate);
+        $previousStartDate = (clone $startDate)->subDays($periodDays + 1);
+        $previousEndDate = (clone $startDate)->subDay();
+        
+        $previousIncome = $user->transactions()
+            ->where('type', 'income')
+            ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
+            ->sum('amount');
+        
+        $previousExpense = $user->transactions()
+            ->where('type', 'expense')
+            ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
+            ->sum('amount');
+        
+        // Calculate trend (positive = increase, negative = decrease)
+        $incomeTrend = $previousIncome > 0 ? (($totalIncome - $previousIncome) / $previousIncome) * 100 : 0;
+        $expenseTrend = $previousExpense > 0 ? (($totalExpense - $previousExpense) / $previousExpense) * 100 : 0;
+        
+        // Format month display for current period
+        $monthDisplay = $startDate->format('M');
+        if ($startDate->month !== $endDate->month) {
+            $monthDisplay = $startDate->format('M') . ' - ' . $endDate->format('M');
+        }
+        
         // 3. Transaction List (dengan filter)
         $transactions = $user->transactions()
             ->with('category')
@@ -88,47 +113,48 @@ class ReportController extends Controller
 
         $pieChartData['colors'] = $this->generateColors(count($pieChartData['labels']));
         
-        // 5. Bar Chart Data - Income vs Expense per Bulan (Tahun Berjalan)
-        // Filter: Only include transactions within user's selected date range
-        $currentYear = Carbon::now()->year;
-        $monthlyData = [];
-
-        for ($month = 1; $month <= 12; $month++) {
-            $monthStart = Carbon::create($currentYear, $month, 1)->startOfMonth();
-            $monthEnd = Carbon::create($currentYear, $month, 1)->endOfMonth();
-
-            // Calculate intersection of month with user's selected date range
-            $rangeStart = max($monthStart, $startDate);
-            $rangeEnd = min($monthEnd, $endDate);
-
-            // Only query if there's an overlap between month and selected range
-            if ($rangeStart <= $rangeEnd) {
-                $monthlyIncome = $user->transactions()
+        // 5. Bar Chart Data - Income vs Expense per 4 Minggu (Weekly comparison)
+        // Split the period into 4 weeks
+        $weeklyData = [];
+        $periodDays = $endDate->diffInDays($startDate) + 1;
+        $daysPerWeek = ceil($periodDays / 4);
+        
+        for ($week = 1; $week <= 4; $week++) {
+            $weekStart = (clone $startDate)->addDays(($week - 1) * $daysPerWeek);
+            $weekEnd = (clone $weekStart)->addDays($daysPerWeek - 1);
+            
+            // Ensure we don't go beyond the selected end date
+            if ($weekEnd > $endDate) {
+                $weekEnd = $endDate;
+            }
+            
+            if ($weekStart <= $endDate) {
+                $weeklyIncome = $user->transactions()
                     ->where('type', 'income')
-                    ->whereBetween('transaction_date', [$rangeStart, $rangeEnd])
+                    ->whereBetween('transaction_date', [$weekStart, $weekEnd])
                     ->sum('amount');
-
-                $monthlyExpense = $user->transactions()
+                
+                $weeklyExpense = $user->transactions()
                     ->where('type', 'expense')
-                    ->whereBetween('transaction_date', [$rangeStart, $rangeEnd])
+                    ->whereBetween('transaction_date', [$weekStart, $weekEnd])
                     ->sum('amount');
             } else {
-                $monthlyIncome = 0;
-                $monthlyExpense = 0;
+                $weeklyIncome = 0;
+                $weeklyExpense = 0;
             }
-
-            $monthlyData[] = [
-                'month' => Carbon::create($currentYear, $month, 1)->format('M'),
-                'income' => (float) $monthlyIncome,
-                'expense' => (float) $monthlyExpense
+            
+            $weeklyData[] = [
+                'week' => "Minggu $week",
+                'income' => (float) $weeklyIncome,
+                'expense' => (float) $weeklyExpense
             ];
         }
         
         // Format untuk Chart.js Bar Chart
         $barChartData = [
-            'labels' => array_column($monthlyData, 'month'),
-            'income' => array_column($monthlyData, 'income'),
-            'expense' => array_column($monthlyData, 'expense')
+            'labels' => array_column($weeklyData, 'week'),
+            'income' => array_column($weeklyData, 'income'),
+            'expense' => array_column($weeklyData, 'expense')
         ];
         
         // 6. Daily Expense Trend (pada periode yang dipilih)
@@ -155,9 +181,12 @@ class ReportController extends Controller
             'filterType',
             'startDate',
             'endDate',
+            'monthDisplay',
             'totalIncome',
             'totalExpense',
             'balance',
+            'incomeTrend',
+            'expenseTrend',
             'transactions',
             'pieChartData',
             'barChartData',
@@ -168,9 +197,15 @@ class ReportController extends Controller
     private function generateColors($count)
     {
         $colors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-            '#36A2EB', '#FFCE56', '#FF9F40', '#C9CBCF', '#4BC0C0'
+            '#005a71', // primary
+            '#ffb86f', // orange
+            '#81d1f0', // light blue
+            '#bec8cd', // gray-blue
+            '#dae2fd', // soft indigo
+            '#ffdcbd', // light orange
+            '#bec6e0', // slate blue
+            '#ffe8d6', // cream orange
+            '#ba1a1a', // red
         ];
 
         return array_slice($colors, 0, $count);

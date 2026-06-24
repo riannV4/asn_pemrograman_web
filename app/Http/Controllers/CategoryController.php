@@ -51,7 +51,7 @@ class CategoryController extends Controller
             ]);
         }
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil dibuat.');
     }
 
@@ -93,7 +93,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil diperbarui.');
     }
 
@@ -109,7 +109,7 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->back()
             ->with('success', 'Kategori berhasil dihapus.');
     }
 }
