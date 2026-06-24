@@ -69,21 +69,26 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => 'nullable|exists:categories,id',
-            'amount' => 'required|numeric|min:0',
             'type' => 'required|in:income,expense',
+            'category_id' => [
+                'nullable',
+                'exists:categories,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value) {
+                        $category = Auth::user()->categories()->find($value);
+                        if (!$category) {
+                            $fail('Kategori tidak valid.');
+                        } elseif ($category->type !== $request->input('type')) {
+                            $fail('Kategori yang dipilih tidak sesuai dengan jenis transaksi.');
+                        }
+                    }
+                }
+            ],
+            'amount' => 'required|numeric|min:0',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
             'input_method' => 'required|in:manual,voice,scan',
         ]);
-
-        // Validasi kategori milik user
-        if ($validated['category_id']) {
-            $category = Auth::user()->categories()->find($validated['category_id']);
-            if (!$category) {
-                return back()->withErrors(['category_id' => 'Kategori tidak valid.'])->withInput();
-            }
-        }
 
         Auth::user()->transactions()->create($validated);
 
@@ -125,21 +130,26 @@ class TransactionController extends Controller
         }
 
         $validated = $request->validate([
-            'category_id' => 'nullable|exists:categories,id',
-            'amount' => 'required|numeric|min:0',
             'type' => 'required|in:income,expense',
+            'category_id' => [
+                'nullable',
+                'exists:categories,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value) {
+                        $category = Auth::user()->categories()->find($value);
+                        if (!$category) {
+                            $fail('Kategori tidak valid.');
+                        } elseif ($category->type !== $request->input('type')) {
+                            $fail('Kategori yang dipilih tidak sesuai dengan jenis transaksi.');
+                        }
+                    }
+                }
+            ],
+            'amount' => 'required|numeric|min:0',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
             'input_method' => 'required|in:manual,voice,scan',
         ]);
-
-        // Validasi kategori milik user
-        if ($validated['category_id']) {
-            $category = Auth::user()->categories()->find($validated['category_id']);
-            if (!$category) {
-                return back()->withErrors(['category_id' => 'Kategori tidak valid.'])->withInput();
-            }
-        }
 
         $transaction->update($validated);
 

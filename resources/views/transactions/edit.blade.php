@@ -14,58 +14,71 @@
 
             <!-- Form Card -->
             <div class="card-shadow-lg bg-white rounded-[32px] p-6 mb-6">
-                <form method="POST" action="{{ route('transactions.update', $transaction) }}" id="editForm">
+                <form method="POST" action="{{ route('transactions.update', $transaction) }}" id="editForm" x-data="transactionEditForm()" @submit="validateForm($event)">
                     @csrf
                     @method('PUT')
-
+ 
                     <!-- Type Tabs -->
                     <div class="flex bg-primary-container/30 rounded-2xl p-1 mb-6">
-                        <button type="button" class="type-tab flex-1 px-4 py-3 rounded-xl font-semibold text-sm" data-type="expense" onclick="setType('expense')">Pengeluaran</button>
-                        <button type="button" class="type-tab flex-1 px-4 py-3 rounded-xl font-semibold text-sm" data-type="income" onclick="setType('income')">Pemasukan</button>
+                        <button type="button" 
+                                @click="type = 'expense'"
+                                :class="type === 'expense' ? 'bg-white shadow-md text-error' : 'text-on-surface-variant'"
+                                class="flex-1 px-4 py-3 rounded-xl font-semibold text-sm transition-all">
+                            Pengeluaran
+                        </button>
+                        <button type="button" 
+                                @click="type = 'income'"
+                                :class="type === 'income' ? 'bg-white shadow-md text-success' : 'text-on-surface-variant'"
+                                class="flex-1 px-4 py-3 rounded-xl font-semibold text-sm transition-all">
+                            Pemasukan
+                        </button>
                     </div>
-                    <input type="hidden" name="type" id="type" value="{{ old('type', $transaction->type) }}" required>
-
+                    <input type="hidden" name="type" x-model="type">
+ 
                     <!-- Amount -->
                     <div class="mb-6">
                         <label class="font-semibold text-sm text-on-surface-variant mb-2 block">Nominal</label>
                         <div class="flex items-center border-b-2 border-primary/30 pb-3 focus-within:border-primary transition-colors">
                             <span class="text-4xl font-bold text-primary mr-2">Rp</span>
-                            <input type="text" id="amount_display" class="w-full bg-transparent border-none p-0 focus:ring-0 text-4xl font-bold text-on-surface placeholder-outline-variant" placeholder="0" oninput="formatAmount(this)" autofocus>
-                            <input type="hidden" name="amount" id="amount" value="{{ old('amount', $transaction->amount) }}" required>
+                            <input type="text" x-model="amountDisplay" @input="formatAmount()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-4xl font-bold text-on-surface placeholder-outline-variant" placeholder="0" autofocus>
+                            <input type="hidden" name="amount" x-model="amount">
                         </div>
                         @error('amount')
                             <p class="text-sm text-error mt-2">{{ $message }}</p>
                         @enderror
                     </div>
-
+ 
                     <!-- Category & Date -->
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="font-semibold text-sm text-on-surface-variant mb-2 block">Kategori</label>
                             <div class="relative">
-                                <select name="category_id" id="category_id" class="w-full appearance-none bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
+                                <select name="category_id" id="category_id" x-model="categoryId" class="w-full appearance-none bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
                                     <option value="">Pilih</option>
-                                    @foreach($categories as $cat)
-                                        <option value="{{ $cat->id }}" data-type="{{ $cat->type }}" {{ old('category_id', $transaction->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                                    @endforeach
+                                    <template x-for="cat in filteredCategories()" :key="cat.id">
+                                        <option :value="cat.id" x-text="cat.name" :selected="categoryId == cat.id"></option>
+                                    </template>
                                 </select>
                                 <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
                             </div>
+                            @error('category_id')
+                                <p class="text-sm text-error mt-2">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="font-semibold text-sm text-on-surface-variant mb-2 block">Tanggal</label>
-                            <input type="date" name="transaction_date" id="transaction_date" value="{{ old('transaction_date', $transaction->transaction_date->format('Y-m-d')) }}" class="w-full bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" required>
+                            <input type="date" name="transaction_date" x-model="transactionDate" class="w-full bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" required>
                         </div>
                     </div>
-
+ 
                     <!-- Notes -->
                     <div class="mb-6">
                         <label class="font-semibold text-sm text-on-surface-variant mb-2 block">Catatan (Opsional)</label>
-                        <input type="text" name="notes" id="notes" value="{{ old('notes', $transaction->notes) }}" placeholder="Tulis detail transaksi..." class="w-full bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
+                        <input type="text" name="notes" x-model="notes" placeholder="Tulis detail transaksi..." class="w-full bg-surface-container border border-outline-variant rounded-2xl px-4 py-3 font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
                     </div>
-
-                    <input type="hidden" name="input_method" id="input_method" value="{{ $transaction->input_method }}">
-
+ 
+                    <input type="hidden" name="input_method" :value="inputMethod">
+ 
                     <!-- Submit Buttons -->
                     <div class="flex gap-3">
                         <a href="{{ route('transactions.index') }}" class="flex-1 bg-surface-container border border-outline-variant text-on-surface font-semibold py-3 rounded-2xl hover:bg-surface-container-high transition-colors text-center">
@@ -96,53 +109,48 @@
     </div>
 
     <script>
-        function setType(type) {
-            document.getElementById('type').value = type;
-            document.querySelectorAll('.type-tab').forEach(tab => {
-                if (tab.dataset.type === type) {
-                    tab.classList.add('bg-white', 'shadow-md', type === 'expense' ? 'text-error' : 'text-success');
-                    tab.classList.remove('text-on-surface-variant');
-                } else {
-                    tab.classList.remove('bg-white', 'shadow-md', 'text-error', 'text-success');
-                    tab.classList.add('text-on-surface-variant');
-                }
-            });
-            
-            const categorySelect = document.getElementById('category_id');
-            const options = categorySelect.querySelectorAll('option');
-            options.forEach(option => {
-                if (option.value === '') {
-                    option.style.display = '';
-                } else {
-                    const optionType = option.getAttribute('data-type');
-                    if (optionType === type) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                }
-            });
-            const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-            if (selectedOption && selectedOption.value !== '' && selectedOption.getAttribute('data-type') !== type) {
-                categorySelect.value = '';
-            }
-        }
-        
-        function formatAmount(input) {
-            let value = input.value.replace(/\D/g, '');
-            document.getElementById('amount').value = value;
-            input.value = value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '';
-        }
+        function transactionEditForm() {
+            return {
+                type: @json(old('type', $transaction->type)),
+                amountDisplay: '',
+                amount: @json(old('amount', $transaction->amount)),
+                categoryId: @json(old('category_id', $transaction->category_id)),
+                transactionDate: @json(old('transaction_date', $transaction->transaction_date->format('Y-m-d'))),
+                notes: @json(old('notes', $transaction->notes)),
+                inputMethod: @json($transaction->input_method),
+                categories: @json($categories),
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const initialType = "{{ old('type', $transaction->type) }}";
-            const initialAmount = "{{ old('amount', $transaction->amount) }}";
-            
-            setType(initialType);
-            if (initialAmount) {
-                document.getElementById('amount').value = initialAmount;
-                document.getElementById('amount_display').value = initialAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                init() {
+                    this.amountDisplay = this.formatNumber(this.amount);
+                    this.$watch('type', (value) => {
+                        this.categoryId = '';
+                    });
+                },
+
+                filteredCategories() {
+                    return this.categories.filter(c => c.type === this.type);
+                },
+
+                formatAmount() {
+                    const value = this.amountDisplay.replace(/\D/g, '');
+                    this.amount = value;
+                    this.amountDisplay = this.formatNumber(value);
+                },
+
+                formatNumber(num) {
+                    if (!num) return '';
+                    return parseInt(num).toLocaleString('id-ID');
+                },
+
+                validateForm(event) {
+                    if (!this.amount || this.amount === '0' || this.amount === '') {
+                        event.preventDefault();
+                        alert('Mohon masukkan nominal transaksi!');
+                        return false;
+                    }
+                    return true;
+                }
             }
-        });
+        }
     </script>
 </x-layouts.mobile-app>
