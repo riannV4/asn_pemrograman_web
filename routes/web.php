@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     Route::resource('categories', CategoryController::class)->except(['show', 'create', 'edit', 'update']);
+    Route::post('transactions/scan-struk', [TransactionController::class, 'scanStruk'])->name('transactions.scan-struk');
     Route::resource('transactions', TransactionController::class)->except(['show']);
     
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');

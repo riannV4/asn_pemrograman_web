@@ -145,6 +145,8 @@
         </div>
     </div>
 
+    <?php $__env->startPush('scripts'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         const trendCanvas = document.getElementById('dailyTrendChart');
 
@@ -212,6 +214,7 @@
             });
         }
     </script>
+    <?php $__env->stopPush(); ?>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>

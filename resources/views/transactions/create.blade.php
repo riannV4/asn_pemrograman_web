@@ -63,16 +63,18 @@
             <!-- Scan Input Section -->
             <div x-show="inputMethod === 'scan'" x-transition class="bg-surface rounded-card p-6 mb-6 shadow-card">
                 <div class="text-center">
-                    <label for="scanInput" class="cursor-pointer">
-                        <div class="w-full h-48 border-2 border-dashed border-outline rounded-button flex flex-col items-center justify-center mb-4">
-                            <span class="material-symbols-rounded text-6xl text-on-surface-variant">document_scanner</span>
-                            <p class="mt-3 text-body-lg font-semibold text-on-surface">Tap untuk scan struk</p>
-                            <p class="text-body-md text-on-surface-variant">Foto atau upload struk belanja</p>
+                    <label for="scanInput" class="cursor-pointer" :class="isScanning ? 'pointer-events-none opacity-60' : ''">
+                        <div class="w-full h-48 border-2 border-dashed border-outline rounded-button flex flex-col items-center justify-center mb-4 transition-all"
+                             :class="isScanning ? 'border-primary bg-primary/5' : 'hover:border-primary/50'">
+                            <span class="material-symbols-rounded text-6xl text-on-surface-variant" :class="isScanning ? 'animate-spin text-primary' : ''" x-text="isScanning ? 'sync' : 'document_scanner'"></span>
+                            <p class="mt-3 text-body-lg font-semibold text-on-surface" x-text="isScanning ? 'Sedang Memproses Struk...' : 'Tap untuk scan struk'"></p>
+                            <p class="text-body-md text-on-surface-variant" x-text="isScanning ? 'Menghubungi OCR.space API...' : 'Foto atau upload struk belanja'"></p>
                         </div>
                     </label>
-                    <input type="file" id="scanInput" accept="image/*" capture="environment" class="hidden" @change="handleScanUpload($event)">
-                    <div x-show="scanResult" class="mt-4 p-4 bg-primary-container rounded-button">
-                        <p class="text-body-md text-on-primary-container" x-text="scanResult"></p>
+                    <input type="file" id="scanInput" accept="image/*" capture="environment" class="hidden" @change="handleScanUpload($event)" :disabled="isScanning">
+                    <div x-show="scanResult" class="mt-4 p-4 rounded-button transition-all"
+                         :class="scanResult.toLowerCase().includes('error') || scanResult.toLowerCase().includes('gagal') ? 'bg-error/10 text-error' : 'bg-primary-container text-on-primary-container'">
+                        <p class="text-body-md" x-text="scanResult"></p>
                     </div>
                 </div>
             </div>
@@ -168,6 +170,7 @@
                 transactionDate: @json(old('transaction_date', date('Y-m-d'))),
                 notes: @json(old('notes', '')),
                 isRecording: false,
+                isScanning: false,
                 voiceTranscript: '',
                 scanResult: '',
                 recognition: null,
@@ -335,20 +338,48 @@
                     const file = event.target.files[0];
                     if (!file) return;
 
-                    // Here you would send the image to your OCR API
-                    // For now, we'll just show a placeholder message
-                    this.scanResult = 'Memproses gambar... (Integrasi OCR akan ditambahkan)';
-                    
-                    // TODO: Implement actual OCR API call
-                    // Example:
-                    // const formData = new FormData();
-                    // formData.append('image', file);
-                    // fetch('/api/ocr', { method: 'POST', body: formData })
-                    //     .then(res => res.json())
-                    //     .then(data => {
-                    //         this.amount = data.amount;
-                    //         this.notes = data.notes;
-                    //     });
+                    this.isScanning = true;
+                    this.scanResult = 'Sedang memproses struk belanja Anda...';
+
+                    const formData = new FormData();
+                    formData.append('struk_gambar', file);
+
+                    // Get CSRF Token dynamically from form or meta tag
+                    const csrfToken = document.querySelector('input[name="_token"]')?.value 
+                        || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                    fetch("{{ route('transactions.scan-struk') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.isScanning = false;
+                        if (data.success) {
+                            this.scanResult = 'Scan berhasil! Total belanja terdeteksi.';
+                            this.amount = data.total.toString();
+                            this.amountDisplay = this.formatNumber(data.total.toString());
+                            
+                            // Append or set raw OCR text into notes field
+                            const prefix = this.notes ? this.notes + "\n\n--- Hasil Scan OCR ---\n" : "";
+                            this.notes = prefix + data.parsed_text;
+                        } else {
+                            this.scanResult = 'Gagal: ' + (data.message || 'Gagal mengekstrak struk.');
+                        }
+                    })
+                    .catch(error => {
+                        this.isScanning = false;
+                        console.error('OCR Error:', error);
+                        this.scanResult = 'Error: ' + (error.message || 'Terjadi kesalahan koneksi atau server.');
+                    });
                 },
 
                 formatAmount() {
