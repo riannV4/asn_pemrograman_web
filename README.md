@@ -88,7 +88,7 @@
 
 #### Users
 
-```sql
+```postgresql
 - id (Primary Key)
 - name (nama pengguna)
 - email (email unik)
@@ -99,7 +99,7 @@
 
 #### Categories
 
-```sql
+```postgresql
 - id (Primary Key)
 - user_id (Foreign Key ke Users)
 - name (nama kategori)
@@ -109,7 +109,7 @@
 
 #### Transactions
 
-```sql
+```postgresql
 - id (Primary Key)
 - user_id (Foreign Key ke Users)
 - category_id (Foreign Key ke Categories)
@@ -131,7 +131,7 @@
 - Node.js 18+ & NPM
 - Composer
 - Git
-- SQLite atau MySQL
+- PostgreSQL
 
 ### Langkah Instalasi
 
@@ -150,6 +150,9 @@ composer install
 
 # JavaScript dependencies
 npm install
+
+# Tailwindcss
+npm install tailwindcss-animate
 ```
 
 3. **Setup Environment**
@@ -366,7 +369,7 @@ Refresh Dashboard & Laporan
 | --- | ----------------------- | --------- | -------------------- |
 | 1   | Khilmi Wahyu Saputra    | 241110061 | Full Stack Developer |
 | 2   | Muh Duta Arkazora       | 241110079 | Frontend Developer   |
-| 3   | Trian Rossi Karurukan   | 241110111 | Full Stack Developer |
+| 3   | Trian Rossi Karurukan   | 241110111 | Frontend Developer   |
 | 4   | Muh Adzin Fakhir Rahman | 241110076 | UI/UX Designer       |
 | 5   | Muh Yasir Al Fatah      | 241110085 | UI/UX Designer       |
 
