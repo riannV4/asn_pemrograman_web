@@ -3,11 +3,16 @@
             
             <!-- Header -->
             <div class="mb-6 flex justify-between items-center">
-                <div>
-                    <h2 class="text-headline-lg font-bold text-on-surface mb-1">Kelola Kategori</h2>
-                    <p class="text-body-md text-on-surface-variant">Atur kategori transaksi kamu</p>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('profile.edit') }}" class="w-10 h-10 rounded-full hover:bg-surface-container flex items-center justify-center transition-colors shrink-0">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                    </a>
+                    <div>
+                        <h2 class="text-headline-lg font-bold text-on-surface mb-1">Kelola Kategori</h2>
+                        <p class="text-body-md text-on-surface-variant">Atur kategori transaksi kamu</p>
+                    </div>
                 </div>
-                <button onclick="openAddModal()" class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center shadow-card hover:scale-110 transition-all">
+                <button onclick="openAddModal()" class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center shadow-card hover:scale-110 transition-all shrink-0">
                     <span class="material-symbols-rounded text-2xl">add</span>
                 </button>
             </div>
@@ -48,12 +53,15 @@
                                 <span class="material-symbols-rounded">delete</span>
                             </button>
                         </form>
-                        <x-modal id="delete-category-{{ $category->id }}-modal" title="Hapus Kategori">
-                            <p>Apakah Anda yakin ingin menghapus kategori {{ $category->name }}?</p>
-                            <x-slot name="footer">
-                                <button @click="$dispatch('close-modal')">Batal</button>
-                                <button @click="document.getElementById('delete-category-{{ $category->id }}-form').submit()">Hapus</button>
-                            </x-slot>
+                        <x-modal id="delete-category-{{ $category->id }}-modal" 
+                                 title="Hapus Kategori?" 
+                                 confirmText="Ya, Hapus" 
+                                 cancelText="Batal"
+                                 type="delete"
+                                 :categoryName="$category->name"
+                                 :categoryColor="$category->color"
+                                 :categoryIcon="$category->icon">
+                            Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.
                         </x-modal>
                     </div>
                 @empty
@@ -398,12 +406,15 @@
                             <span class="material-symbols-rounded">delete</span>
                         </button>
                     </form>
-                    <x-modal id="delete-category-${category.id}-modal" title="Hapus Kategori">
-                        <p>Apakah Anda yakin ingin menghapus kategori ${category.name}?</p>
-                        <x-slot name="footer">
-                            <button @click="$dispatch('close-modal')">Batal</button>
-                            <button onclick="this.closest('x-modal').previousElementSibling.submit()">Hapus</button>
-                        </x-slot>
+                    <x-modal id="delete-category-${category.id}-modal" 
+                             title="Hapus Kategori?" 
+                             confirmText="Ya, Hapus" 
+                             cancelText="Batal"
+                             type="delete"
+                             categoryName="${category.name}"
+                             categoryColor="${category.color}"
+                             categoryIcon="${category.icon}">
+                        Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.
                     </x-modal>
                 </div>
             `;

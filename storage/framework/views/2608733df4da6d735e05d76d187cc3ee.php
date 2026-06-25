@@ -8,7 +8,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['currentPage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('transactions')]); ?>
-    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6 lg:px-8 lg:py-8">
         <?php if(session('success')): ?>
             <div class="mb-6 bg-success-container border border-success text-success px-4 py-3 rounded-button shadow-card" role="alert">
                 <span class="block text-body-md font-semibold"><?php echo e(session('success')); ?></span>
@@ -23,7 +23,7 @@
 
         <!-- Filter Section -->
         <div class="bg-surface rounded-card p-4 mb-6 shadow-card">
-            <form method="GET" action="<?php echo e(route('transactions.index')); ?>" class="space-y-4">
+            <form method="GET" action="<?php echo e(route('transactions.index')); ?>" class="space-y-4 lg:grid lg:grid-cols-[1fr_auto_auto_auto] lg:items-end lg:gap-3 lg:space-y-0">
                 <!-- Search -->
                 <div>
                     <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari transaksi..." 
@@ -31,7 +31,7 @@
                 </div>
                 
                 <!-- Filter Row -->
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3 lg:contents">
                     <select name="category_id" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-0">
                         <option value="">Semua Kategori</option>
                         <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -49,7 +49,7 @@
                     </select>
                 </div>
                 
-                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-button hover:bg-primary-dark transition-colors">
+                <button type="submit" class="w-full lg:w-auto lg:px-8 bg-primary text-white font-bold py-3 rounded-button hover:bg-primary-dark transition-colors">
                     Filter
                 </button>
             </form>

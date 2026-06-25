@@ -102,12 +102,12 @@
                         Hapus Transaksi
                     </button>
                 </form>
-<x-modal id="delete-transaction-modal" title="Hapus Transaksi">
-    <p>Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.</p>
-    <x-slot name="footer">
-        <button @click="$dispatch('close-modal')">Batal</button>
-        <button @click="document.getElementById('delete-transaction-form').submit()">Hapus</button>
-    </x-slot>
+<x-modal id="delete-transaction-modal" 
+         title="Hapus Transaksi?" 
+         confirmText="Ya, Hapus" 
+         cancelText="Batal"
+         type="delete">
+    Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.
 </x-modal>
             </div>
 
