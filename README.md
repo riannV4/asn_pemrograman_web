@@ -387,4 +387,4 @@ Untuk pertanyaan atau feedback, silakan hubungi tim pengembang atau buka issue d
 
 ---
 
-Tetapi hari ini di Jogja saya sampaikan, SAYA AKAN LAWAN!!!!
+Tetapi hari ini di Jogja saya sampaikan, SAYA AKAN LAWAN!!!!!
