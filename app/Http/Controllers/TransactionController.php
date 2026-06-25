@@ -133,7 +133,7 @@ class TransactionController extends Controller
         $fileName = $file->getClientOriginalName();
 
         try {
-            $apiKey = env('OCR_SPACE_API_KEY');
+            $apiKey = config('services.ocr_space.key');
             if (empty($apiKey)) {
                 return response()->json([
                     'success' => false,
