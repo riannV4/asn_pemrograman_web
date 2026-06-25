@@ -128,15 +128,6 @@
             @include('profile.partials.delete-user-form')
         </div>
 
-        <div class="bg-surface rounded-card p-4 mb-6 shadow-card lg:hidden">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-4 rounded-button hover:shadow-card-hover transition-all shadow-card flex items-center justify-center gap-2">
-                    <span class="material-symbols-rounded">logout</span>
-                    Logout
-                </button>
-            </form>
-        </div>
         </div>
         </div>
     </div>

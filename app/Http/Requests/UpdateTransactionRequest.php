@@ -41,6 +41,7 @@ class UpdateTransactionRequest extends FormRequest
             'amount' => 'required|numeric|min:1',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
+            'input_method' => 'nullable|string',
         ];
     }
 }

@@ -17,6 +17,7 @@
                 <form method="POST" action="{{ route('transactions.update', $transaction) }}" id="editForm" x-data="transactionEditForm()" @submit="validateForm($event)">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="input_method" x-model="inputMethod">
  
                     <!-- Type Tabs -->
                     <div class="flex bg-primary-container/30 rounded-2xl p-1 mb-6">
@@ -94,7 +95,7 @@
             <div class="card-shadow bg-white rounded-[28px] p-6">
                 <h3 class="font-semibold text-error mb-2">Hapus Transaksi</h3>
                 <p class="text-sm text-on-surface-variant mb-4">Tindakan ini tidak dapat dibatalkan</p>
-                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" id="delete-transaction-form">
+                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" id="delete-transaction-modal-form">
                     @csrf
                     @method('DELETE')
                     <button type="button" @click="$dispatch('open-modal', { id: 'delete-transaction-modal' })" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-3 rounded-2xl hover:scale-[1.02] transition-all card-shadow flex items-center justify-center gap-2">
@@ -111,7 +112,6 @@
 </x-modal>
             </div>
 
-        </div>
     </div>
 
     <script>

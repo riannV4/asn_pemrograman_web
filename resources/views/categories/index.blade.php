@@ -46,12 +46,12 @@
                         </div>
 
                         <!-- Delete Button -->
-                        <form id="delete-category-{{ $category->id }}-form" action="{{ route('categories.destroy', $category) }}" method="POST" class="shrink-0">
+                        <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-{{ $category->id }}-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors shrink-0">
+                            <span class="material-symbols-rounded">delete</span>
+                        </button>
+                        <form id="delete-category-{{ $category->id }}-modal-form" action="{{ route('categories.destroy', $category) }}" method="POST" class="hidden">
                             @csrf
                             @method('DELETE')
-                            <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-{{ $category->id }}-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
-                                <span class="material-symbols-rounded">delete</span>
-                            </button>
                         </form>
                         <x-modal id="delete-category-{{ $category->id }}-modal" 
                                  title="Hapus Kategori?" 
@@ -192,8 +192,29 @@
         </div>
     </div>
 
+    <!-- Delete Confirm Modal (for dynamically added categories) -->
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white rounded-[32px] shadow-2xl max-w-sm w-full p-6 text-center">
+            <div class="w-20 h-20 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-rounded text-red-500 text-3xl">delete</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Kategori?</h3>
+            <p class="text-sm text-gray-500 px-2 leading-relaxed mb-6">Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.</p>
+            <hr class="border-t border-gray-100 w-full mb-6">
+            <div class="flex gap-3">
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">close</span>
+                    <span>Batal</span>
+                </button>
+                <button type="button" onclick="confirmDelete()" class="flex-1 bg-[#d32f2f] hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">delete</span>
+                    <span>Ya, Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let selectedType = 'expense';
         let selectedIcon = 'shopping_cart';
         let selectedColor = '#7c3aed';
 
@@ -399,23 +420,13 @@
                             <span class="ml-2">0 transaksi</span>
                         </p>
                     </div>
-                    <form action="/categories/${category.id}" method="POST" class="shrink-0">
+                    <button type="button" onclick="openDeleteModal(${category.id})" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors shrink-0">
+                        <span class="material-symbols-rounded">delete</span>
+                    </button>
+                    <form id="delete-category-${category.id}-modal-form" action="/categories/${category.id}" method="POST" class="hidden">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                         <input type="hidden" name="_method" value="DELETE">
-                        <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-${category.id}-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
-                            <span class="material-symbols-rounded">delete</span>
-                        </button>
                     </form>
-                    <x-modal id="delete-category-${category.id}-modal" 
-                             title="Hapus Kategori?" 
-                             confirmText="Ya, Hapus" 
-                             cancelText="Batal"
-                             type="delete"
-                             categoryName="${category.name}"
-                             categoryColor="${category.color}"
-                             categoryIcon="${category.icon}">
-                        Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.
-                    </x-modal>
                 </div>
             `;
             
@@ -440,5 +451,22 @@
             selectIcon('shopping_cart');
             selectColor('#7c3aed');
         });
+
+        function openDeleteModal(categoryId) {
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+            document.getElementById('deleteConfirmModal').dataset.targetId = categoryId;
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
+        }
+
+        function confirmDelete() {
+            const categoryId = document.getElementById('deleteConfirmModal').dataset.targetId;
+            const form = document.getElementById('delete-category-' + categoryId + '-modal-form');
+            if (form) {
+                form.submit();
+            }
+        }
     </script>
 </x-layouts.mobile-app>
