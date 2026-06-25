@@ -8,7 +8,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['currentPage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('dashboard')]); ?>
-    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6 lg:px-8 lg:py-8">
         <!-- App Header with Logo -->
         <div class="mb-6 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Main Balance Card with Large Rounded Corners -->
-        <div class="bg-gradient-to-br from-primary to-primary-dark rounded-card p-6 mb-6 relative overflow-hidden shadow-card">
+        <div class="bg-gradient-to-br from-primary to-primary-dark rounded-card p-6 lg:p-8 mb-6 relative overflow-hidden shadow-card">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-8 -mt-8"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-6 -mb-6"></div>
 
@@ -64,7 +64,7 @@
         </div>
 
         <!-- Tren Pengeluaran Chart -->
-        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+        <div class="bg-surface rounded-card p-6 lg:p-8 mb-6 shadow-card">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-headline-md font-semibold text-on-surface">Tren Pengeluaran</h3>
             </div>
@@ -74,8 +74,9 @@
         </div>
 
         <!-- Top Categories with Color-Coded -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <?php if($topCategories->isNotEmpty()): ?>
-            <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+            <div class="bg-surface rounded-card p-6 shadow-card">
                 <h3 class="text-headline-md font-semibold text-on-surface mb-4">Top Kategori Pengeluaran</h3>
                 <div class="space-y-3">
                     <?php
@@ -143,8 +144,11 @@
                 </div>
             <?php endif; ?>
         </div>
+        </div>
     </div>
 
+    <?php $__env->startPush('scripts'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         const trendCanvas = document.getElementById('dailyTrendChart');
 
@@ -212,6 +216,7 @@
             });
         }
     </script>
+    <?php $__env->stopPush(); ?>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>

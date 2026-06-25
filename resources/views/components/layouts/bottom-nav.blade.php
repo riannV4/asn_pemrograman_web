@@ -1,11 +1,11 @@
 @props(['current' => 'dashboard'])
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-outline-variant shadow-lg z-50">
+<nav class="fixed bottom-0 left-0 right-0 bg-primary border-t border-primary-dark shadow-lg z-50 lg:hidden">
     <div class="max-w-md mx-auto px-4">
         <div class="flex items-center justify-around h-16">
             <!-- Beranda -->
             <a href="{{ route('dashboard') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ ($current === 'dashboard' || $current === 'transactions') ? 'text-primary' : 'text-on-surface-variant' }}">
+               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ ($current === 'dashboard' || $current === 'transactions') ? 'text-white' : 'text-white/70' }}">
                 <span class="material-symbols-rounded text-2xl" style="{{ ($current === 'dashboard' || $current === 'transactions') ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
                     grid_view
                 </span>
@@ -14,7 +14,7 @@
 
             <!-- Catat -->
             <a href="{{ route('transactions.create') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'create' ? 'text-primary' : 'text-on-surface-variant' }}">
+               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'create' ? 'text-white' : 'text-white/70' }}">
                 <span class="material-symbols-rounded text-2xl" style="{{ $current === 'create' ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
                     add_circle
                 </span>
@@ -23,7 +23,7 @@
 
             <!-- Laporan -->
             <a href="{{ route('reports') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'reports' ? 'text-primary' : 'text-on-surface-variant' }}">
+               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'reports' ? 'text-white' : 'text-white/70' }}">
                 <span class="material-symbols-rounded text-2xl" style="{{ $current === 'reports' ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
                     bar_chart
                 </span>
@@ -32,7 +32,7 @@
 
             <!-- Pengaturan -->
             <a href="{{ route('profile.edit') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'profile' ? 'text-primary' : 'text-on-surface-variant' }}">
+               class="flex flex-col items-center justify-center flex-1 py-2 transition-colors duration-200 {{ $current === 'profile' ? 'text-white' : 'text-white/70' }}">
                 <span class="material-symbols-rounded text-2xl" style="{{ $current === 'profile' ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;' : '' }}">
                     settings
                 </span>
