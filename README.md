@@ -1,19 +1,21 @@
-# Kostly Tracker - Manajemen Keuangan Anak Kost
+# Kostly Tracker — Manajemen Keuangan Anak Kost
 
-[![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=flat-square)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square)](https://php.net)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-38B2AC?style=flat-square)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square)](https://vitejs.dev)
+[![License](https://img.shields.io/badge/Lisensi-Akademik-blue?style=flat-square)](#-lisensi)
 
 ## 📋 Deskripsi Proyek
 
-**Kostly Tracker** adalah aplikasi web modern untuk manajemen keuangan anak kost (mahasiswa yang tinggal di kos). Aplikasi ini membantu pengguna mencatat, menganalisis, dan mengoptimalkan pengeluaran sehari-hari dengan antarmuka yang intuitif dan fitur-fitur canggih.
+**Kostly Tracker** adalah aplikasi web manajemen keuangan yang dirancang untuk mahasiswa anak kost. Aplikasi ini membantu pengguna mencatat pemasukan dan pengeluaran, menganalisis pola keuangan melalui grafik interaktif, serta mengelola kategori transaksi secara personal — semuanya dalam antarmuka yang modern dan responsif.
 
 ### Masalah yang Dipecahkan
 
-- Sulit melacak pengeluaran harian
-- Tidak ada insight tentang pola pengeluaran
-- Kesulitan membuat anggaran bulanan
-- Kurangnya laporan keuangan yang terstruktur
+- Sulit melacak pengeluaran harian secara terstruktur
+- Tidak ada insight visual tentang pola pengeluaran
+- Kesulitan membuat dan memantau anggaran bulanan
+- Kurangnya laporan keuangan yang mudah dipahami
 
 ---
 
@@ -21,105 +23,122 @@
 
 ### Backend
 
-- **Framework**: [Laravel 11](https://laravel.com) - PHP web framework yang powerful dan elegant
-- **PHP**: 8.2+ - Server-side programming language
-- **Database**: PostgreSQL - database relasional
-- **Composer**: Dependency manager untuk PHP
+| Teknologi | Versi | Keterangan |
+|---|---|---|
+| [Laravel](https://laravel.com) | ^12.0 | PHP web framework |
+| PHP | ^8.2 | Server-side language |
+| SQLite | *(default)* | Database ringan bawaan (bisa diganti PostgreSQL/MySQL) |
+| Laravel Breeze | ^2.4 | Starter kit autentikasi |
+| Laravel Tinker | ^2.10 | REPL interaktif |
 
 ### Frontend
 
-- **Tailwind CSS 3**: Utility-first CSS framework untuk styling responsif
-- **Material Design 3**: Design system modern dengan Google Material Symbols
-- **Chart.js 4.4**: Library untuk visualisasi data grafis
-- **Blade Templating**: Laravel's expressive templating engine
-- **Alpine.js**: Lightweight JavaScript framework (dari Laravel Starter Kit)
+| Teknologi | Versi | Keterangan |
+|---|---|---|
+| [Tailwind CSS](https://tailwindcss.com) | ^3.1 | Utility-first CSS framework |
+| [Alpine.js](https://alpinejs.dev) | ^3.4 | Lightweight JS framework |
+| [Vite](https://vitejs.dev) | ^7.0 | Build tool & dev server |
+| Chart.js | — | Visualisasi grafik (via CDN di Blade views) |
+| Material Symbols | — | Icon set dari Google |
+| Blade Templating | — | Templating engine bawaan Laravel |
 
-### Development Tools
+### Development & Testing
 
-- **Vite**: Modern build tool untuk development server yang cepat
-- **NPM**: JavaScript package manager
-- **Git**: Version control system
-- **PHPUnit**: Testing framework untuk PHP
+| Teknologi | Keterangan |
+|---|---|
+| Vitest | Unit testing JavaScript |
+| PHPUnit ^11 | Unit testing PHP |
+| Laravel Pint | Code style fixer (PSR-12) |
+| Laravel Pail | Log viewer real-time |
+| Laravel Sail | Docker environment untuk development |
+| Concurrently | Menjalankan banyak proses paralel (dev mode) |
 
 ---
 
 ## ✨ Fitur Utama
 
-### 1. Dashboard
+### 1. 🏠 Dashboard
 
-- **Ringkasan Keuangan**: Total saldo, pemasukan, dan pengeluaran bulan ini
-- **Tren Pengeluaran**: Visualisasi grafik pengeluaran dengan Chart.js
+- **Ringkasan Keuangan**: Saldo total, pemasukan & pengeluaran bulan ini
+- **Grafik Tren Harian**: Visualisasi pengeluaran 7 hari terakhir (Line Chart)
+- **Grafik Tren Mingguan**: Pengeluaran per minggu dalam bulan berjalan (Bar Chart)
+- **Grafik Kategori**: Breakdown pengeluaran per kategori bulan ini (Doughnut Chart)
 - **Transaksi Terakhir**: Daftar 5 transaksi terbaru dengan kategori dan icon
-- **Status Indikator**: Trend positif/negatif dengan indicator visual
+- **Top Kategori**: Peringkat 5 kategori pengeluaran terbesar
 
-### 2. Manajemen Transaksi
+### 2. 💸 Manajemen Transaksi
 
-- Pencatatan transaksi manual dengan kategori
-- Klasifikasi otomatis berdasarkan kategori pengguna
-- Input: Nominal, Tanggal, Jenis (Income/Expense), Kategori, Catatan
-- Validasi data transaksi
-- Update saldo real-time
+- Pencatatan transaksi manual (Pemasukan / Pengeluaran)
+- **Scan Struk**: Upload foto struk belanja untuk input otomatis via OCR (`POST /transactions/scan-struk`)
+- Filter & pencarian transaksi
+- Edit dan hapus transaksi
+- Input: Nominal, Tanggal, Jenis, Kategori, Catatan, Metode Input
 
-### 3. Laporan & Statistik
+### 3. 📊 Laporan & Statistik
 
-- Breakdown pengeluaran per kategori (Pie Chart)
-- Tren pengeluaran harian (7 hari terakhir)
-- Tren pengeluaran mingguan
+- Breakdown pengeluaran per kategori
+- Tren pengeluaran harian (7 hari terakhir) dan mingguan (bulan berjalan)
 - Top kategori pengeluaran
 - Filter data berdasarkan periode
 
-### 4. Manajemen Kategori
+### 4. 🗂️ Manajemen Kategori
 
-- CRUD kategori kustom
-- Tipe kategori: Income dan Expense
-- Kategori default tersedia
+- CRUD kategori kustom per pengguna
+- Tipe kategori: **Income** dan **Expense**
+- Kustomisasi **icon** (Material Symbols) dan **warna** (`#RRGGBB`)
+- Kategori default otomatis dibuat saat pengguna registrasi
 
-### 5. Profil Pengguna
+### 5. 👤 Profil Pengguna
 
-- Edit profil & password
-- Manajemen akun
-- Logout
+- Edit nama & email
+- Ganti password
+- Hapus akun
 
 ---
 
 ## 📊 Struktur Database
 
-### Tabel Utama
+### Tabel `users`
 
-#### Users
-
-```postgresql
-- id (Primary Key)
-- name (nama pengguna)
-- email (email unik)
-- password (hashed)
-- email_verified_at
-- remember_token
+```sql
+id                  BIGINT PRIMARY KEY
+name                VARCHAR
+email               VARCHAR UNIQUE
+password            VARCHAR (bcrypt)
+email_verified_at   TIMESTAMP NULL
+remember_token      VARCHAR NULL
+created_at, updated_at
 ```
 
-#### Categories
+### Tabel `categories`
 
-```postgresql
-- id (Primary Key)
-- user_id (Foreign Key ke Users)
-- name (nama kategori)
-- type (income / expense)
-- created_at, updated_at
+```sql
+id          BIGINT PRIMARY KEY
+user_id     BIGINT FK → users (CASCADE DELETE)
+name        VARCHAR(50)
+type        ENUM('income', 'expense')
+icon        VARCHAR(50) NULL
+color       VARCHAR(7) NULL   -- format: #RRGGBB
+created_at, updated_at
 ```
 
-#### Transactions
+> **Index**: `(user_id, type)` untuk performa query filter per tipe.
 
-```postgresql
-- id (Primary Key)
-- user_id (Foreign Key ke Users)
-- category_id (Foreign Key ke Categories)
-- amount (nominal transaksi)
-- type (income / expense)
-- transaction_date (tanggal transaksi)
-- notes (catatan opsional)
-- input_method (manual / voice / scan)
-- created_at, updated_at
+### Tabel `transactions`
+
+```sql
+id                BIGINT PRIMARY KEY
+user_id           BIGINT FK → users (CASCADE DELETE)
+category_id       BIGINT FK → categories (SET NULL on delete), nullable
+amount            DECIMAL(12, 2)
+type              ENUM('income', 'expense')
+transaction_date  DATE
+notes             TEXT NULL
+input_method      ENUM('manual', 'voice', 'scan') DEFAULT 'manual'
+created_at, updated_at
 ```
+
+> **Index**: `(user_id, transaction_date)`, `(user_id, type)` untuk performa agregasi dashboard.
 
 ---
 
@@ -131,57 +150,80 @@
 - Node.js 18+ & NPM
 - Composer
 - Git
-- PostgreSQL
 
 ### Langkah Instalasi
 
-1. **Clone Repository**
+**1. Clone Repository**
 
 ```bash
 git clone <repository-url>
 cd asn_pemrograman_web
 ```
 
-2. **Install Dependencies**
+**2. Setup Otomatis (Direkomendasikan)**
 
 ```bash
-# PHP dependencies
+composer run setup
+```
+
+Perintah ini akan secara otomatis:
+- Menjalankan `composer install`
+- Menyalin `.env.example` → `.env` (jika belum ada)
+- Menghasilkan `APP_KEY`
+- Menjalankan migrasi database
+- Menjalankan `npm install` & `npm run build`
+
+**3. Setup Manual (Opsional)**
+
+```bash
+# Install PHP dependencies
 composer install
 
-# JavaScript dependencies
-npm install
-
-# Tailwindcss
-npm install tailwindcss-animate
-```
-
-3. **Setup Environment**
-
-```bash
+# Salin dan konfigurasi environment
 cp .env.example .env
 php artisan key:generate
-```
 
-4. **Database Migration**
-
-```bash
+# Jalankan migrasi database
 php artisan migrate
-php artisan db:seed
-```
 
-5. **Build Assets**
-
-```bash
+# Install JS dependencies & build assets
+npm install
 npm run build
 ```
 
-6. **Run Development Server**
+**4. Konfigurasi `.env`**
 
-```bash
-php artisan serve
+Sesuaikan `.env` sesuai kebutuhan (default menggunakan SQLite):
+
+```env
+APP_NAME="Kostly Tracker"
+APP_URL=http://localhost
+
+# Untuk PostgreSQL (opsional):
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=kostly_tracker
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Untuk fitur Scan Struk (opsional):
+OCR_SPACE_API_KEY=your_ocr_api_key
 ```
 
-Akses aplikasi di: `http://localhost:8000`
+**5. Jalankan Server Development**
+
+```bash
+composer run dev
+```
+
+Perintah ini menjalankan secara paralel:
+- `php artisan serve` — Laravel server
+- `php artisan queue:listen` — Queue worker
+- `php artisan pail` — Log viewer
+- `npm run dev` — Vite dev server
+
+Akses aplikasi di: **http://localhost:8000**
 
 ---
 
@@ -190,42 +232,48 @@ Akses aplikasi di: `http://localhost:8000`
 ```
 asn_pemrograman_web/
 ├── app/
-│   ├── Http/Controllers/
-│   │   ├── DashboardController.php
-│   │   ├── TransactionController.php
-│   │   ├── CategoryController.php
-│   │   ├── ReportController.php
-│   │   └── ProfileController.php
+│   ├── Http/
+│   │   └── Controllers/
+│   │       ├── DashboardController.php   # Logika dashboard & chart data
+│   │       ├── TransactionController.php  # CRUD transaksi + scan struk (OCR)
+│   │       ├── CategoryController.php    # CRUD kategori
+│   │       ├── ReportController.php      # Laporan & statistik
+│   │       ├── ProfileController.php     # Manajemen profil
+│   │       └── Auth/                     # Autentikasi (Breeze)
 │   ├── Models/
 │   │   ├── User.php
 │   │   ├── Transaction.php
 │   │   └── Category.php
+│   ├── Traits/
+│   │   └── HasChartColors.php            # Generator warna dinamis untuk chart
 │   └── Listeners/
-│       └── CreateDefaultCategories.php
+│       └── CreateDefaultCategories.php   # Auto-create kategori default saat register
 ├── database/
 │   ├── migrations/
 │   ├── seeders/
 │   └── factories/
 ├── resources/
 │   ├── views/
-│   │   ├── dashboard.blade.php
-│   │   ├── layouts/
-│   │   │   ├── app.blade.php
-│   │   │   └── app-dashboard.blade.php
-│   │   ├── components/
-│   │   ├── transactions/
-│   │   ├── categories/
-│   │   ├── reports/
-│   │   └── auth/
+│   │   ├── welcome.blade.php             # Landing page
+│   │   ├── dashboard.blade.php           # Halaman dashboard
+│   │   ├── reports.blade.php             # Halaman laporan
+│   │   ├── layouts/                      # Layout utama (app, dashboard)
+│   │   ├── components/                   # Komponen Blade reusable
+│   │   ├── transactions/                 # Views CRUD transaksi
+│   │   ├── categories/                   # Views CRUD kategori
+│   │   ├── profile/                      # Views profil
+│   │   └── auth/                         # Views autentikasi
 │   ├── css/
 │   │   └── app.css
 │   └── js/
 │       ├── app.js
 │       └── bootstrap.js
 ├── routes/
-│   ├── web.php
-│   ├── auth.php
+│   ├── web.php                           # Route utama aplikasi
+│   ├── auth.php                          # Route autentikasi (Breeze)
 │   └── console.php
+├── .env.example
+├── Dockerfile
 ├── tailwind.config.js
 ├── vite.config.js
 └── package.json
@@ -233,46 +281,75 @@ asn_pemrograman_web/
 
 ---
 
-## 🔄 Workflow Aplikasi
+## 🔗 Daftar Route
 
-### 1. Authentication Flow
+### Publik
+
+| Method | URI | Keterangan |
+|---|---|---|
+| `GET` | `/` | Landing page |
+| `POST` | `/register` | Register akun baru |
+| `POST` | `/login` | Login |
+| `POST` | `/logout` | Logout |
+
+### Terproteksi (Auth Required)
+
+| Method | URI | Keterangan |
+|---|---|---|
+| `GET` | `/dashboard` | Halaman dashboard |
+| `GET` | `/transactions` | Daftar transaksi |
+| `POST` | `/transactions` | Buat transaksi baru |
+| `GET` | `/transactions/{id}/edit` | Form edit transaksi |
+| `PUT` | `/transactions/{id}` | Update transaksi |
+| `DELETE` | `/transactions/{id}` | Hapus transaksi |
+| `POST` | `/transactions/scan-struk` | Scan struk via OCR |
+| `GET` | `/categories` | Daftar kategori |
+| `POST` | `/categories` | Buat kategori baru |
+| `PUT` | `/categories/{id}` | Update kategori |
+| `DELETE` | `/categories/{id}` | Hapus kategori |
+| `GET` | `/reports` | Laporan & statistik |
+| `GET` | `/profile` | Form edit profil |
+| `PATCH` | `/profile` | Update profil |
+| `DELETE` | `/profile` | Hapus akun |
+
+---
+
+## 🔄 Alur Aplikasi
+
+### Authentication Flow
 
 ```
-Login / Register → Verifikasi Email → Dashboard
+Landing Page → Register / Login → Verifikasi Email → Dashboard
 ```
 
-### 2. Dashboard Flow
+### Dashboard Flow
 
 ```
-User membuka Dashboard
+Buka Dashboard
     ↓
-Ambil transaksi bulan berjalan
+Hitung Saldo, Pemasukan, Pengeluaran (bulan ini & all-time)
     ↓
-Hitung: Saldo, Pemasukan, Pengeluaran
+Ambil 5 Transaksi Terakhir
     ↓
-Ambil 5 transaksi terbaru
+Agregasi Pengeluaran per Kategori (bulan ini)
     ↓
-Generate grafik tren
+Hitung Tren Harian (7 hari terakhir)
     ↓
-Tampilkan Dashboard
+Hitung Tren Mingguan (bulan berjalan, Minggu 1–5)
+    ↓
+Kirim data chart ke view (JSON) → Render Chart.js
 ```
 
-### 3. Transaction Entry Flow
+### Transaction Entry Flow
 
 ```
-Masuk Menu Transaksi
-    ↓
-Pilih Metode Input (Manual/Voice/Scan)
-    ↓
-Form Terisi (Nominal, Tanggal, Jenis, Kategori, Catatan)
-    ↓
-Validasi Data
-    ↓
-Simpan Transaksi
-    ↓
-Update Saldo & Statistik
-    ↓
-Refresh Dashboard & Laporan
+Pilih Metode Input:
+├── Manual  → Isi form → Validasi → Simpan
+└── Scan    → Upload foto struk → OCR API → Auto-fill form → Validasi → Simpan
+                                                                    ↓
+                                                       Update Saldo & Statistik
+                                                                    ↓
+                                                   Redirect ke Daftar Transaksi
 ```
 
 ---
@@ -281,103 +358,105 @@ Refresh Dashboard & Laporan
 
 ### Color Palette
 
-- **Primary**: `#005a71` (Teal)
-- **Secondary**: `#565e74` (Dark Blue-Gray)
-- **Tertiary**: `#794602` (Orange)
-- **Error**: `#ba1a1a` (Red)
-- **Surface**: `#f7fafc` (Light Gray)
+| Token | Hex | Keterangan |
+|---|---|---|
+| Primary | `#005a71` | Teal (aksen utama) |
+| Secondary | `#565e74` | Dark Blue-Gray |
+| Tertiary | `#794602` | Orange |
+| Error | `#ba1a1a` | Red |
+| Surface | `#f7fafc` | Light Gray (background) |
 
-### Typography
+### Tipografi
 
 - **Font**: Plus Jakarta Sans, Figtree
-- **Headline Lg**: 24px Bold
-- **Headline Md**: 20px Semibold
-- **Body Lg**: 16px Regular
-- **Body Md**: 14px Regular
+- **Headline Large**: 24px Bold
+- **Headline Medium**: 20px Semibold
+- **Body Large**: 16px Regular
+- **Body Medium**: 14px Regular
 - **Label Bold**: 12px Bold
 
-### Components
+### Komponen
 
-- Material Symbols Outlined Icons
-- Custom Elevation Shadow (0 4px 12px rgba(15, 23, 42, 0.05))
-- Rounded Corners: 0.25rem (default), 0.5rem (lg), 0.75rem (xl)
+- **Icons**: Material Symbols Outlined
+- **Shadow**: `0 4px 12px rgba(15, 23, 42, 0.05)`
+- **Border Radius**: `0.25rem` (sm), `0.5rem` (lg), `0.75rem` (xl)
 
 ---
 
-## 📈 Fitur Lanjutan yang Direncanakan
+## 🐳 Docker
+
+Proyek ini dilengkapi `Dockerfile` untuk deployment:
+
+```bash
+# Build image
+docker build -t kostly-tracker .
+
+# Jalankan container
+docker run -p 8000:8000 --env-file .env kostly-tracker
+```
+
+Dockerfile menggunakan `php:8.2-cli`, menginstall semua dependency, build assets Vite, lalu menjalankan migrasi dan server secara otomatis.
+
+---
+
+## 🧪 Testing
+
+```bash
+# PHP tests (PHPUnit)
+composer run test
+
+# JavaScript tests (Vitest)
+npm run test
+
+# Watch mode JS tests
+npm run test:watch
+```
+
+---
+
+## 🔐 Keamanan
+
+- Password di-hash dengan **bcrypt** (12 rounds)
+- **CSRF Protection** bawaan Laravel pada setiap form
+- **SQL Injection** dicegah dengan Eloquent ORM & parameter binding
+- **Email verification** untuk akun baru
+- **Rate limiting** untuk percobaan login
+- **Cascade delete** — data transaksi & kategori terhapus otomatis jika akun dihapus
+- Siap dijalankan dengan **HTTPS**
+
+---
+
+## 📈 Rencana Pengembangan
 
 - [ ] Voice Input untuk transaksi (Speech-to-Text)
-- [ ] Receipt Scanning (OCR)
-- [ ] Budget Planning & Alerts
-- [ ] Export Laporan (PDF/Excel)
-- [ ] Mobile App (React Native)
-- [ ] AI Insights & Recommendations
-- [ ] Multi-language Support
+- [ ] Budget Planning & Notifikasi Alert
+- [ ] Export Laporan ke PDF / Excel
+- [ ] AI Insights & Rekomendasi Pengeluaran
 - [ ] Dark Mode
-
----
-
-## 🔐 Security
-
-- Password hashing dengan bcrypt
-- CSRF Protection dengan Laravel
-- SQL Injection prevention dengan Eloquent ORM
-- Email verification untuk akun baru
-- Rate limiting untuk login attempts
-- HTTPS ready
-
----
-
-## 📝 API Endpoints
-
-### Authentication
-
-- `POST /register` - Register user baru
-- `POST /login` - Login
-- `POST /logout` - Logout
-
-### Dashboard
-
-- `GET /dashboard` - Tampilkan dashboard
-
-### Transactions
-
-- `GET /transactions` - Daftar transaksi
-- `GET /transactions/{id}` - Detail transaksi
-- `POST /transactions` - Buat transaksi
-- `PUT /transactions/{id}` - Update transaksi
-- `DELETE /transactions/{id}` - Hapus transaksi
-
-### Categories
-
-- `GET /categories` - Daftar kategori
-- `POST /categories` - Buat kategori
-- `PUT /categories/{id}` - Update kategori
-- `DELETE /categories/{id}` - Hapus kategori
-
-### Reports
-
-- `GET /reports` - Tampilkan laporan & statistik
+- [ ] Multi-language Support (ID / EN)
+- [ ] Mobile App (React Native / Flutter)
 
 ---
 
 ## 👥 Tim Pengembang
 
 **Kelompok: SAYA AKAN LAWAN!!**
+**Mata Kuliah**: Pemrograman Web
+**Institusi**: Universitas Mercu Buana Yogyakarta
 
-| No  | Nama                    | NPM       | Role                 |
-| --- | ----------------------- | --------- | -------------------- |
-| 1   | Khilmi Wahyu Saputra    | 241110061 | Full Stack Developer |
-| 2   | Muh Duta Arkazora       | 241110079 | Frontend Developer   |
-| 3   | Trian Rossi Karurukan   | 241110111 | Frontend Developer   |
-| 4   | Muh Adzin Fakhir Rahman | 241110076 | UI/UX Designer       |
-| 5   | Muh Yasir Al Fatah      | 241110085 | UI/UX Designer       |
+| No | Nama | NPM | Role |
+|---|---|---|---|
+| 1 | Khilmi Wahyu Saputra | 241110061 | Full Stack Developer |
+| 2 | Muh Duta Arkazora | 241110079 | Frontend Developer |
+| 3 | Trian Rossi Karurukan | 241110111 | Frontend Developer |
+| 4 | Muh Adzin Fakhir Rahman | 241110076 | UI/UX Designer |
+| 5 | Muh Yasir Al Fatah | 241110085 | UI/UX Designer |
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini dibuat untuk keperluan akademik Universitas Mercu Buana Yogyakarta.
+Proyek ini dibuat untuk keperluan akademik **Universitas Mercu Buana Yogyakarta**. Tidak untuk digunakan secara komersial.
 
 ---
 
@@ -387,4 +466,5 @@ Untuk pertanyaan atau feedback, silakan hubungi tim pengembang atau buka issue d
 
 ---
 
-Tetapi hari ini di Jogja saya sampaikan, SAYA AKAN LAWAN!!!!!
+> *Kostly Tracker — Catat, Analisis, Hemat. SAYA AKAN LAWAN!!* 🚀
+

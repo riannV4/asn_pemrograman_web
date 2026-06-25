@@ -1,3 +1,32 @@
+<?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
+
+$__newAttributes = [];
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['title' => null]));
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (in_array($__key, $__propNames)) {
+        $$__key = $$__key ?? $__value;
+    } else {
+        $__newAttributes[$__key] = $__value;
+    }
+}
+
+$attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
+
+unset($__propNames);
+unset($__newAttributes);
+
+foreach (array_filter((['title' => null]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+    $$__key = $$__key ?? $__value;
+}
+
+$__defined_vars = get_defined_vars();
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (array_key_exists($__key, $__defined_vars)) unset($$__key);
+}
+
+unset($__defined_vars, $__key, $__value); ?>
 <!DOCTYPE html>
 <html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
     <head>
@@ -5,7 +34,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-        <title><?php echo e(config('app.name', 'Laravel')); ?></title>
+        <title><?php echo e($title ? $title . ' | ' . config('app.name', 'Kostly Tracker') : config('app.name', 'Kostly Tracker')); ?></title>
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="<?php echo e(asset('favicon.ico')); ?>" type="image/x-icon">
+        <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('favicon-16x16.png')); ?>">
+        <link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('favicon-32x32.png')); ?>">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('apple-touch-icon.png')); ?>">
+
+        <!-- Metadata Website -->
+        <meta name="application-name" content="Kostly Tracker">
+        <meta name="apple-mobile-web-app-title" content="Kostly Tracker">
+        <meta name="description" content="Aplikasi manajemen keuangan khusus anak kost untuk mencatat pemasukan, pengeluaran, dan memantau kondisi keuangan secara real-time.">
+
+        <!-- SEO dan Social Preview -->
+        <meta property="og:title" content="Kostly Tracker">
+        <meta property="og:description" content="Aplikasi Manajemen Keuangan Anak Kost">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+        <meta name="twitter:card" content="summary_large_image">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
