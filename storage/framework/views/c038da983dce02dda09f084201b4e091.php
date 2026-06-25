@@ -8,7 +8,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['currentPage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reports')]); ?>
-    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6">
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 px-4 py-6 lg:px-8 lg:py-8">
         <div class="mb-6">
             <h2 class="text-headline-lg font-bold text-on-surface mb-1">Laporan Keuangan</h2>
             <p class="text-body-md text-on-surface-variant">Analisis pengeluaran dan pemasukan kamu</p>
@@ -16,28 +16,28 @@
 
         <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
             <h3 class="text-headline-md font-semibold text-on-surface mb-4">Filter Periode</h3>
-            <form method="GET" action="<?php echo e(route('reports')); ?>" class="space-y-4">
-                <div>
+            <form method="GET" action="<?php echo e(route('reports')); ?>" class="space-y-4 lg:space-y-0 lg:flex lg:items-end lg:gap-4" x-data="{ periode: '<?php echo e($filterType); ?>' }">
+                <div class="lg:w-48 lg:shrink-0">
                     <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Pilih Periode</label>
-                    <select id="filter" name="filter" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0" onchange="toggleCustomDate(this.value)">
-                        <option value="weekly" <?php echo e($filterType === 'weekly' ? 'selected' : ''); ?>>Mingguan</option>
-                        <option value="monthly" <?php echo e($filterType === 'monthly' ? 'selected' : ''); ?>>Bulanan</option>
-                        <option value="custom" <?php echo e($filterType === 'custom' ? 'selected' : ''); ?>>Custom</option>
+                    <select id="filter" name="filter" x-model="periode" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
+                        <option value="weekly">Mingguan</option>
+                        <option value="monthly">Bulanan</option>
+                        <option value="custom">Custom</option>
                     </select>
                 </div>
 
-                <div id="custom-date-range" class="<?php echo e($filterType === 'custom' ? '' : 'hidden'); ?> space-y-3">
-                    <div>
+                <div id="custom-date-range" x-show="periode === 'custom'" x-transition class="space-y-3 lg:flex lg:gap-3 lg:space-y-0 lg:flex-1">
+                    <div class="lg:flex-1">
                         <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Mulai</label>
                         <input type="date" id="start_date" name="start_date" value="<?php echo e($filterType === 'custom' && $startDate ? $startDate->format('Y-m-d') : ''); ?>" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                     </div>
-                    <div>
+                    <div class="lg:flex-1">
                         <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Akhir</label>
                         <input type="date" id="end_date" name="end_date" value="<?php echo e($filterType === 'custom' && $endDate ? $endDate->format('Y-m-d') : ''); ?>" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-button hover:shadow-card-hover transition-all shadow-card">
+                <button type="submit" class="w-full lg:w-auto lg:px-8 lg:shrink-0 bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-button hover:shadow-card-hover transition-all shadow-card">
                     Terapkan Filter
                 </button>
             </form>
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
             <div class="bg-gradient-to-br from-primary to-primary-dark rounded-card p-4 text-white shadow-card">
                 <div class="flex items-center gap-2 mb-2 opacity-90">
                     <span class="material-symbols-rounded text-lg">account_balance_wallet</span>
@@ -73,7 +73,8 @@
             </div>
         </div>
 
-        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+        <div class="bg-surface rounded-card p-6 shadow-card">
             <h3 class="text-headline-md font-semibold text-on-surface mb-4">Pengeluaran per Kategori</h3>
             <?php if(empty($pieChartData['labels'])): ?>
                 <div class="text-center py-12">
@@ -106,7 +107,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
+        <div class="bg-surface rounded-card p-6 shadow-card">
             <h3 class="text-headline-md font-semibold text-on-surface mb-4">Tren Pengeluaran Harian</h3>
             <?php if(empty($dailyExpenseTrend['labels'])): ?>
                 <div class="text-center py-12">
@@ -118,6 +119,7 @@
                     <canvas id="trendChart"></canvas>
                 </div>
             <?php endif; ?>
+        </div>
         </div>
 
         <div class="bg-surface rounded-card p-6 shadow-card">
@@ -151,22 +153,9 @@
         </div>
     </div>
 
-    <script>
-        function toggleCustomDate(value) {
-            const customDateRange = document.getElementById('custom-date-range');
-
-            if (!customDateRange) {
-                return;
-            }
-
-            if (value === 'custom') {
-                customDateRange.classList.remove('hidden');
-            } else {
-                customDateRange.classList.add('hidden');
-            }
-        }
-
-        <?php if(!empty($pieChartData['labels'])): ?>
+    <?php $__env->startPush('scripts'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script>        <?php if(!empty($pieChartData['labels'])): ?>
             const donutCtx = document.getElementById('donutChart');
 
             if (donutCtx) {
@@ -277,6 +266,7 @@
             }
         <?php endif; ?>
     </script>
+    <?php $__env->stopPush(); ?>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal8b1a96032cb10664afbc3f43162d0ab6)): ?>

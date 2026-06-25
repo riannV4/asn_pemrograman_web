@@ -12,11 +12,16 @@
             
             <!-- Header -->
             <div class="mb-6 flex justify-between items-center">
-                <div>
-                    <h2 class="text-headline-lg font-bold text-on-surface mb-1">Kelola Kategori</h2>
-                    <p class="text-body-md text-on-surface-variant">Atur kategori transaksi kamu</p>
+                <div class="flex items-center gap-4">
+                    <a href="<?php echo e(route('profile.edit')); ?>" class="w-10 h-10 rounded-full hover:bg-surface-container flex items-center justify-center transition-colors shrink-0">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                    </a>
+                    <div>
+                        <h2 class="text-headline-lg font-bold text-on-surface mb-1">Kelola Kategori</h2>
+                        <p class="text-body-md text-on-surface-variant">Atur kategori transaksi kamu</p>
+                    </div>
                 </div>
-                <button onclick="openAddModal()" class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center shadow-card hover:scale-110 transition-all">
+                <button onclick="openAddModal()" class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center shadow-card hover:scale-110 transition-all shrink-0">
                     <span class="material-symbols-rounded text-2xl">add</span>
                 </button>
             </div>
@@ -52,13 +57,34 @@
                         </div>
 
                         <!-- Delete Button -->
-                        <form action="<?php echo e(route('categories.destroy', $category)); ?>" method="POST" onsubmit="return confirm('Yakin ingin menghapus kategori ini?');" class="shrink-0">
+                        <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-<?php echo e($category->id); ?>-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors shrink-0">
+                            <span class="material-symbols-rounded">delete</span>
+                        </button>
+                        <form id="delete-category-<?php echo e($category->id); ?>-modal-form" action="<?php echo e(route('categories.destroy', $category)); ?>" method="POST" class="hidden">
                             <?php echo csrf_field(); ?>
                             <?php echo method_field('DELETE'); ?>
-                            <button type="submit" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
-                                <span class="material-symbols-rounded">delete</span>
-                            </button>
                         </form>
+                        <?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['id' => 'delete-category-'.e($category->id).'-modal','title' => 'Hapus Kategori?','confirmText' => 'Ya, Hapus','cancelText' => 'Batal','type' => 'delete','categoryName' => $category->name,'categoryColor' => $category->color,'categoryIcon' => $category->icon]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'delete-category-'.e($category->id).'-modal','title' => 'Hapus Kategori?','confirmText' => 'Ya, Hapus','cancelText' => 'Batal','type' => 'delete','categoryName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($category->name),'categoryColor' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($category->color),'categoryIcon' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($category->icon)]); ?>
+                            Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.
+                         <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $attributes = $__attributesOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__attributesOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="bg-surface rounded-card p-12 text-center shadow-card">
@@ -188,8 +214,29 @@
         </div>
     </div>
 
+    <!-- Delete Confirm Modal (for dynamically added categories) -->
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white rounded-[32px] shadow-2xl max-w-sm w-full p-6 text-center">
+            <div class="w-20 h-20 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-rounded text-red-500 text-3xl">delete</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Kategori?</h3>
+            <p class="text-sm text-gray-500 px-2 leading-relaxed mb-6">Kategori ini akan dihapus permanen. Transaksi yang terkait tidak akan terhapus.</p>
+            <hr class="border-t border-gray-100 w-full mb-6">
+            <div class="flex gap-3">
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">close</span>
+                    <span>Batal</span>
+                </button>
+                <button type="button" onclick="confirmDelete()" class="flex-1 bg-[#d32f2f] hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">delete</span>
+                    <span>Ya, Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let selectedType = 'expense';
         let selectedIcon = 'shopping_cart';
         let selectedColor = '#7c3aed';
 
@@ -333,7 +380,7 @@
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Menyimpan...';
+            submitBtn.innerHTML = '<span class="material-symbols-rounded animate-spin">progress_activity</span> Menyimpan...';
 
             const formData = new FormData(event.target);
             
@@ -366,7 +413,7 @@
                 alert('Terjadi kesalahan. Silakan coba lagi.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Simpan Kategori';
+                submitBtn.innerHTML = '<span class="material-symbols-rounded">check_circle</span> Simpan Kategori';
             }
         }
 
@@ -382,7 +429,7 @@
             const categoryHtml = `
                 <div class="card-shadow bg-white rounded-[24px] p-4 flex items-center gap-4 hover:scale-[1.02] transition-all" data-category-id="${category.id}">
                     <div class="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style="background-color: ${category.color}20;">
-                        <span class="material-symbols-outlined text-2xl" style="color: ${category.color};">
+                        <span class="material-symbols-rounded text-2xl" style="color: ${category.color};">
                             ${category.icon}
                         </span>
                     </div>
@@ -395,12 +442,12 @@
                             <span class="ml-2">0 transaksi</span>
                         </p>
                     </div>
-                    <form action="/categories/${category.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus kategori ini?');" class="shrink-0">
+                    <button type="button" onclick="openDeleteModal(${category.id})" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors shrink-0">
+                        <span class="material-symbols-rounded">delete</span>
+                    </button>
+                    <form id="delete-category-${category.id}-modal-form" action="/categories/${category.id}" method="POST" class="hidden">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                         <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
                     </form>
                 </div>
             `;
@@ -426,6 +473,23 @@
             selectIcon('shopping_cart');
             selectColor('#7c3aed');
         });
+
+        function openDeleteModal(categoryId) {
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+            document.getElementById('deleteConfirmModal').dataset.targetId = categoryId;
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
+        }
+
+        function confirmDelete() {
+            const categoryId = document.getElementById('deleteConfirmModal').dataset.targetId;
+            const form = document.getElementById('delete-category-' + categoryId + '-modal-form');
+            if (form) {
+                form.submit();
+            }
+        }
     </script>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

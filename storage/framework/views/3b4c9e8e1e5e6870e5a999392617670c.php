@@ -2,9 +2,14 @@
 
 $__newAttributes = [];
 $__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames(([
-    'name',
-    'show' => false,
-    'maxWidth' => '2xl'
+    'id' => null,
+    'title' => 'Confirm',
+    'confirmText' => 'Confirm',
+    'cancelText' => 'Cancel',
+    'type' => 'confirm', // 'confirm' or 'delete'
+    'categoryName' => null,
+    'categoryColor' => '#7c3aed',
+    'categoryIcon' => 'sell'
 ]));
 
 foreach ($attributes->all() as $__key => $__value) {
@@ -21,9 +26,14 @@ unset($__propNames);
 unset($__newAttributes);
 
 foreach (array_filter(([
-    'name',
-    'show' => false,
-    'maxWidth' => '2xl'
+    'id' => null,
+    'title' => 'Confirm',
+    'confirmText' => 'Confirm',
+    'cancelText' => 'Cancel',
+    'type' => 'confirm', // 'confirm' or 'delete'
+    'categoryName' => null,
+    'categoryColor' => '#7c3aed',
+    'categoryIcon' => 'sell'
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 }
@@ -35,79 +45,59 @@ foreach ($attributes->all() as $__key => $__value) {
 }
 
 unset($__defined_vars, $__key, $__value); ?>
+<div x-data="{ show: false }" x-show="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4" style="display:none;" @open-modal.window="if($event.detail.id === '<?php echo e($id); ?>') show = true" @close-modal.window="if($event.detail.id === '<?php echo e($id); ?>') show = false">
+    <?php if($type === 'delete'): ?>
+        <div class="bg-white rounded-[32px] shadow-2xl max-w-sm w-full p-6 text-center" @click.away="show = false">
+            <!-- Icon Header -->
+            <div class="w-20 h-20 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-rounded text-red-500 text-3xl">delete</span>
+            </div>
 
-<?php
-$maxWidth = [
-    'sm' => 'sm:max-w-sm',
-    'md' => 'sm:max-w-md',
-    'lg' => 'sm:max-w-lg',
-    'xl' => 'sm:max-w-xl',
-    '2xl' => 'sm:max-w-2xl',
-][$maxWidth];
-?>
+            <!-- Title -->
+            <h3 class="text-xl font-bold text-gray-900 mb-2"><?php echo e($title); ?></h3>
 
-<div
-    x-data="{
-        show: <?php echo \Illuminate\Support\Js::from($show)->toHtml() ?>,
-        focusables() {
-            // All focusable element types...
-            let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
-            return [...$el.querySelectorAll(selector)]
-                // All non-disabled elements...
-                .filter(el => ! el.hasAttribute('disabled'))
-        },
-        firstFocusable() { return this.focusables()[0] },
-        lastFocusable() { return this.focusables().slice(-1)[0] },
-        nextFocusable() { return this.focusables()[this.nextFocusableIndex()] || this.firstFocusable() },
-        prevFocusable() { return this.focusables()[this.prevFocusableIndex()] || this.lastFocusable() },
-        nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1) },
-        prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
-    }"
-    x-init="$watch('show', value => {
-        if (value) {
-            document.body.classList.add('overflow-y-hidden');
-            <?php echo e($attributes->has('focusable') ? 'setTimeout(() => firstFocusable().focus(), 100)' : ''); ?>
+            <!-- Category Badge (if available) -->
+            <?php if($categoryName): ?>
+                <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style="background-color: <?php echo e($categoryColor); ?>15; color: <?php echo e($categoryColor); ?>;">
+                    <span class="material-symbols-rounded text-base"><?php echo e($categoryIcon ?: 'sell'); ?></span>
+                    <span><?php echo e($categoryName); ?></span>
+                </div>
+            <?php endif; ?>
 
-        } else {
-            document.body.classList.remove('overflow-y-hidden');
-        }
-    })"
-    x-on:open-modal.window="$event.detail == '<?php echo e($name); ?>' ? show = true : null"
-    x-on:close-modal.window="$event.detail == '<?php echo e($name); ?>' ? show = false : null"
-    x-on:close.stop="show = false"
-    x-on:keydown.escape.window="show = false"
-    x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
-    x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
-    x-show="show"
-    class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50"
-    style="display: <?php echo e($show ? 'block' : 'none'); ?>;"
->
-    <div
-        x-show="show"
-        class="fixed inset-0 transform transition-all"
-        x-on:click="show = false"
-        x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-    >
-        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-    </div>
+            <!-- Description/Slot -->
+            <div class="text-sm text-gray-500 px-2 leading-relaxed mb-6">
+                <?php echo e($slot); ?>
 
-    <div
-        x-show="show"
-        class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full <?php echo e($maxWidth); ?> sm:mx-auto"
-        x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-        x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-    >
-        <?php echo e($slot); ?>
+            </div>
 
-    </div>
+            <!-- Divider -->
+            <hr class="border-t border-gray-100 w-full mb-6">
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+                <button type="button" @click="show = false" class="flex-1 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">close</span>
+                    <span><?php echo e($cancelText); ?></span>
+                </button>
+                <button type="button" @click="document.getElementById('<?php echo e($id); ?>-form').submit()" class="flex-1 bg-[#d32f2f] hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-rounded text-lg">delete</span>
+                    <span><?php echo e($confirmText); ?></span>
+                </button>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6" @click.away="show = false">
+            <h2 class="text-xl font-semibold mb-4" id="<?php echo e($id); ?>-title"><?php echo e($title); ?></h2>
+            <div class="mb-6" id="<?php echo e($id); ?>-body">
+                <?php echo e($slot); ?>
+
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" @click="show = false" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"><?php echo e($cancelText); ?></button>
+                <button type="button" @click="document.getElementById('<?php echo e($id); ?>-form').submit()" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"><?php echo e($confirmText); ?></button>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
+
 <?php /**PATH C:\Users\alfat\Favorites\asn_pemrograman_web\resources\views/components/modal.blade.php ENDPATH**/ ?>

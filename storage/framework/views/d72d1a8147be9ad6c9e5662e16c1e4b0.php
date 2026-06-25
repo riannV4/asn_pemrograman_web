@@ -72,16 +72,18 @@
             <!-- Scan Input Section -->
             <div x-show="inputMethod === 'scan'" x-transition class="bg-surface rounded-card p-6 mb-6 shadow-card">
                 <div class="text-center">
-                    <label for="scanInput" class="cursor-pointer">
-                        <div class="w-full h-48 border-2 border-dashed border-outline rounded-button flex flex-col items-center justify-center mb-4">
-                            <span class="material-symbols-rounded text-6xl text-on-surface-variant">document_scanner</span>
-                            <p class="mt-3 text-body-lg font-semibold text-on-surface">Tap untuk scan struk</p>
-                            <p class="text-body-md text-on-surface-variant">Foto atau upload struk belanja</p>
+                    <label for="scanInput" class="cursor-pointer" :class="isScanning ? 'pointer-events-none opacity-60' : ''">
+                        <div class="w-full h-48 border-2 border-dashed border-outline rounded-button flex flex-col items-center justify-center mb-4 transition-all"
+                             :class="isScanning ? 'border-primary bg-primary/5' : 'hover:border-primary/50'">
+                            <span class="material-symbols-rounded text-6xl text-on-surface-variant" :class="isScanning ? 'animate-spin text-primary' : ''" x-text="isScanning ? 'sync' : 'document_scanner'"></span>
+                            <p class="mt-3 text-body-lg font-semibold text-on-surface" x-text="isScanning ? 'Sedang Memproses Struk...' : 'Tap untuk scan struk'"></p>
+                            <p class="text-body-md text-on-surface-variant" x-text="isScanning ? 'Menghubungi OCR.space API...' : 'Foto atau upload struk belanja'"></p>
                         </div>
                     </label>
-                    <input type="file" id="scanInput" accept="image/*" capture="environment" class="hidden" @change="handleScanUpload($event)">
-                    <div x-show="scanResult" class="mt-4 p-4 bg-primary-container rounded-button">
-                        <p class="text-body-md text-on-primary-container" x-text="scanResult"></p>
+                    <input type="file" id="scanInput" accept="image/*" capture="environment" class="hidden" @change="handleScanUpload($event)" :disabled="isScanning">
+                    <div x-show="scanResult" class="mt-4 p-4 rounded-button transition-all"
+                         :class="scanResult.toLowerCase().includes('error') || scanResult.toLowerCase().includes('gagal') ? 'bg-error/10 text-error' : 'bg-primary-container text-on-primary-container'">
+                        <p class="text-body-md" x-text="scanResult"></p>
                     </div>
                 </div>
             </div>
@@ -132,9 +134,9 @@ unset($__errorArgs, $__bag); ?>
                     <select name="category_id" x-model="categoryId" 
                             class="w-full appearance-none bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                         <option value="">Pilih Kategori</option>
-                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($category->id); ?>"><?php echo e($category->name); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <template x-for="cat in filteredCategories()" :key="cat.id">
+                            <option :value="cat.id" x-text="cat.name" :selected="categoryId == cat.id"></option>
+                        </template>
                     </select>
                     <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
                 </div>
@@ -187,41 +189,40 @@ unset($__errorArgs, $__bag); ?>
 
             <!-- Submit Button -->
             <button type="submit" 
-                    @click="console.log('Form data:', {type: type, amount: amount, categoryId: categoryId, transactionDate: transactionDate, inputMethod: inputMethod})"
                     class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-4 rounded-button shadow-card flex items-center justify-center gap-2 hover:shadow-card-hover transition-all">
                 <span class="material-symbols-rounded">check</span>
                 <span x-text="amount ? 'Simpan Transaksi' : 'Masukkan Nominal Terlebih Dahulu'"></span>
             </button>
-            
-            <!-- Debug Info (remove in production) -->
-            <div class="mt-4 p-4 bg-surface rounded-button text-xs text-on-surface-variant" x-show="false">
-                <p><strong>Debug:</strong></p>
-                <p>Amount: <span x-text="amount"></span></p>
-                <p>Amount Display: <span x-text="amountDisplay"></span></p>
-                <p>Type: <span x-text="type"></span></p>
-                <p>Category: <span x-text="categoryId"></span></p>
-                <p>Date: <span x-text="transactionDate"></span></p>
-                <p>Input Method: <span x-text="inputMethod"></span></p>
-            </div>
         </form>
     </div>
 
     <script>
         function transactionForm() {
             return {
-                inputMethod: 'manual',
-                type: 'expense',
+                inputMethod: <?php echo json_encode(old('input_method', 'manual'), 512) ?>,
+                type: <?php echo json_encode(old('type', 'expense'), 512) ?>,
                 amountDisplay: '',
-                amount: '',
-                categoryId: '',
-                transactionDate: '<?php echo e(date('Y-m-d')); ?>',
-                notes: '',
+                amount: <?php echo json_encode(old('amount', ''), 512) ?>,
+                categoryId: <?php echo json_encode(old('category_id', ''), 512) ?>,
+                transactionDate: <?php echo json_encode(old('transaction_date', date('Y-m-d')), 512) ?>,
+                notes: <?php echo json_encode(old('notes', ''), 512) ?>,
                 isRecording: false,
+                isScanning: false,
                 voiceTranscript: '',
                 scanResult: '',
                 recognition: null,
+                categories: <?php echo json_encode($categories, 15, 512) ?>,
 
                 init() {
+                    // Initialize amount display if there is an old value
+                    if (this.amount) {
+                        this.amountDisplay = this.formatNumber(this.amount);
+                    }
+                    
+                    this.$watch('type', (value) => {
+                        this.categoryId = '';
+                    });
+
                     // Initialize Web Speech API
                     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -283,45 +284,13 @@ unset($__errorArgs, $__bag); ?>
                     }
                     this.type = detectedType;
                     
-                    // 2. Parse amount - support both digits and Indonesian number words
-                    let amount = 0;
-                    
-                    // First try to find digits
-                    const numberMatch = text.match(/\d+[\d.]*\d*/);
-                    if (numberMatch) {
-                        amount = parseInt(numberMatch[0].replace(/\./g, ''));
-                    } else {
-                        // Parse Indonesian number words
-                        const numberWords = {
-                            'nol': 0, 'satu': 1, 'dua': 2, 'tiga': 3, 'empat': 4,
-                            'lima': 5, 'enam': 6, 'tujuh': 7, 'delapan': 8, 'sembilan': 9,
-                            'sepuluh': 10, 'sebelas': 11, 'belas': 10, 'puluh': 10,
-                            'seratus': 100, 'ratus': 100, 'seribu': 1000, 'ribu': 1000,
-                            'juta': 1000000
-                        };
-                        
-                        // Try to parse common patterns like "dua puluh lima ribu"
-                        if (lowerText.includes('ribu')) {
-                            const beforeRibu = lowerText.split('ribu')[0];
-                            if (beforeRibu.includes('puluh')) {
-                                const parts = beforeRibu.split('puluh');
-                                const tens = this.wordToNumber(parts[0].trim(), numberWords);
-                                const ones = parts[1] ? this.wordToNumber(parts[1].trim(), numberWords) : 0;
-                                amount = (tens * 10 + ones) * 1000;
-                            } else {
-                                const num = this.wordToNumber(beforeRibu.trim(), numberWords);
-                                amount = num * 1000;
-                            }
-                        } else if (lowerText.includes('ratus')) {
-                            const beforeRatus = lowerText.split('ratus')[0];
-                            const num = this.wordToNumber(beforeRatus.trim(), numberWords);
-                            amount = num * 100;
-                        }
-                    }
-                    
+                    // 2. Parse amount - support digits, decimals, and Indonesian scale words
+                    const amount = window.parseIndonesianAmount?.(text) ?? 0;
+
                     if (amount > 0) {
-                        this.amount = amount.toString();
-                        this.amountDisplay = this.formatNumber(amount.toString());
+                        const integerAmount = Math.round(amount);
+                        this.amount = integerAmount.toString();
+                        this.amountDisplay = this.formatNumber(integerAmount.toString());
                     }
                     
                     // 3. Try to detect category from keywords
@@ -332,21 +301,20 @@ unset($__errorArgs, $__bag); ?>
                         'hiburan': ['hiburan', 'nonton', 'film', 'main', 'game', 'konser'],
                         'kesehatan': ['dokter', 'obat', 'rumah sakit', 'klinik', 'apotek'],
                         'pendidikan': ['buku', 'kursus', 'sekolah', 'kuliah', 'les'],
-                        'tagihan': ['listrik', 'air', 'internet', 'pulsa', 'wifi', 'token']
+                        'tagihan': ['listrik', 'air', 'internet', 'pulsa', 'wifi', 'token'],
+                        'gaji': ['gaji', 'salary', 'honor', 'upah'],
+                        'bonus': ['bonus', 'komisi', 'insentif']
                     };
                     
                     for (let [category, keywords] of Object.entries(categoryMap)) {
                         for (let keyword of keywords) {
                             if (lowerText.includes(keyword)) {
-                                // Find matching category in select options
-                                const select = document.querySelector('select[name="category_id"]');
-                                if (select) {
-                                    for (let option of select.options) {
-                                        if (option.text.toLowerCase().includes(category)) {
-                                            this.categoryId = option.value;
-                                            break;
-                                        }
-                                    }
+                                // Find matching category in the local categories list that matches current type
+                                const matchedCat = this.categories.find(c => 
+                                    c.type === this.type && c.name.toLowerCase().includes(category)
+                                );
+                                if (matchedCat) {
+                                    this.categoryId = matchedCat.id.toString();
                                 }
                                 break;
                             }
@@ -357,34 +325,56 @@ unset($__errorArgs, $__bag); ?>
                     this.notes = text;
                 },
                 
-                wordToNumber(word, numberWords) {
-                    if (!word) return 0;
-                    word = word.trim();
-                    if (word.startsWith('se')) {
-                        word = word.substring(2);
-                        return 1 * (numberWords[word] || 1);
-                    }
-                    return numberWords[word] || 0;
+                filteredCategories() {
+                    return this.categories.filter(cat => cat.type === this.type);
                 },
-
+                
                 handleScanUpload(event) {
                     const file = event.target.files[0];
                     if (!file) return;
 
-                    // Here you would send the image to your OCR API
-                    // For now, we'll just show a placeholder message
-                    this.scanResult = 'Memproses gambar... (Integrasi OCR akan ditambahkan)';
-                    
-                    // TODO: Implement actual OCR API call
-                    // Example:
-                    // const formData = new FormData();
-                    // formData.append('image', file);
-                    // fetch('/api/ocr', { method: 'POST', body: formData })
-                    //     .then(res => res.json())
-                    //     .then(data => {
-                    //         this.amount = data.amount;
-                    //         this.notes = data.notes;
-                    //     });
+                    this.isScanning = true;
+                    this.scanResult = 'Sedang memproses struk belanja Anda...';
+
+                    const formData = new FormData();
+                    formData.append('struk_gambar', file);
+
+                    // Get CSRF Token dynamically from form or meta tag
+                    const csrfToken = document.querySelector('input[name="_token"]')?.value 
+                        || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                    fetch("<?php echo e(route('transactions.scan-struk')); ?>", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.isScanning = false;
+                        if (data.success) {
+                            this.scanResult = 'Scan berhasil! Total belanja terdeteksi.';
+                            this.amount = data.total.toString();
+                            this.amountDisplay = this.formatNumber(data.total.toString());
+                            
+                            // Append or set raw OCR text into notes field
+                            const prefix = this.notes ? this.notes + "\n\n--- Hasil Scan OCR ---\n" : "";
+                            this.notes = prefix + data.parsed_text;
+                        } else {
+                            this.scanResult = 'Gagal: ' + (data.message || 'Gagal mengekstrak struk.');
+                        }
+                    })
+                    .catch(error => {
+                        this.isScanning = false;
+                        console.error('OCR Error:', error);
+                        this.scanResult = 'Error: ' + (error.message || 'Terjadi kesalahan koneksi atau server.');
+                    });
                 },
 
                 formatAmount() {
@@ -412,16 +402,6 @@ unset($__errorArgs, $__bag); ?>
                         alert('Mohon pilih tanggal transaksi!');
                         return false;
                     }
-
-                    // Log for debugging
-                    console.log('Submitting form with data:', {
-                        type: this.type,
-                        amount: this.amount,
-                        categoryId: this.categoryId,
-                        transactionDate: this.transactionDate,
-                        inputMethod: this.inputMethod,
-                        notes: this.notes
-                    });
 
                     return true;
                 }

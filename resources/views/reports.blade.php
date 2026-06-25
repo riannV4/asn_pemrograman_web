@@ -7,28 +7,28 @@
 
         <div class="bg-surface rounded-card p-6 mb-6 shadow-card">
             <h3 class="text-headline-md font-semibold text-on-surface mb-4">Filter Periode</h3>
-            <form method="GET" action="{{ route('reports') }}" class="space-y-4 lg:grid lg:grid-cols-[1fr_2fr_auto] lg:items-end lg:gap-4 lg:space-y-0">
-                <div>
+            <form method="GET" action="{{ route('reports') }}" class="space-y-4 lg:space-y-0 lg:flex lg:items-end lg:gap-4" x-data="{ periode: '{{ $filterType }}' }">
+                <div class="lg:w-48 lg:shrink-0">
                     <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Pilih Periode</label>
-                    <select id="filter" name="filter" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0" onchange="toggleCustomDate(this.value)">
-                        <option value="weekly" {{ $filterType === 'weekly' ? 'selected' : '' }}>Mingguan</option>
-                        <option value="monthly" {{ $filterType === 'monthly' ? 'selected' : '' }}>Bulanan</option>
-                        <option value="custom" {{ $filterType === 'custom' ? 'selected' : '' }}>Custom</option>
+                    <select id="filter" name="filter" x-model="periode" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
+                        <option value="weekly">Mingguan</option>
+                        <option value="monthly">Bulanan</option>
+                        <option value="custom">Custom</option>
                     </select>
                 </div>
 
-                <div id="custom-date-range" class="{{ $filterType === 'custom' ? '' : 'hidden' }} space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
-                    <div>
+                <div id="custom-date-range" x-show="periode === 'custom'" x-transition class="space-y-3 lg:flex lg:gap-3 lg:space-y-0 lg:flex-1">
+                    <div class="lg:flex-1">
                         <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Mulai</label>
                         <input type="date" id="start_date" name="start_date" value="{{ $filterType === 'custom' && $startDate ? $startDate->format('Y-m-d') : '' }}" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                     </div>
-                    <div>
+                    <div class="lg:flex-1">
                         <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 block">Tanggal Akhir</label>
                         <input type="date" id="end_date" name="end_date" value="{{ $filterType === 'custom' && $endDate ? $endDate->format('Y-m-d') : '' }}" class="w-full bg-surface-container border-2 border-outline rounded-button px-4 py-3 text-body-lg text-on-surface focus:border-primary focus:ring-0">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full lg:w-auto lg:px-8 bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-button hover:shadow-card-hover transition-all shadow-card">
+                <button type="submit" class="w-full lg:w-auto lg:px-8 lg:shrink-0 bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-button hover:shadow-card-hover transition-all shadow-card">
                     Terapkan Filter
                 </button>
             </form>
@@ -145,22 +145,7 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-    <script>
-        function toggleCustomDate(value) {
-            const customDateRange = document.getElementById('custom-date-range');
-
-            if (!customDateRange) {
-                return;
-            }
-
-            if (value === 'custom') {
-                customDateRange.classList.remove('hidden');
-            } else {
-                customDateRange.classList.add('hidden');
-            }
-        }
-
-        @if(!empty($pieChartData['labels']))
+    <script>        @if(!empty($pieChartData['labels']))
             const donutCtx = document.getElementById('donutChart');
 
             if (donutCtx) {
