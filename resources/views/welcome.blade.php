@@ -5,7 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Tracker Kostly - Kelola Uang Kost dengan Mudah</title>
+    <title>Kostly Tracker - Manajemen Keuangan Anak Kost</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
+    <!-- Metadata Website -->
+    <meta name="application-name" content="Kostly Tracker">
+    <meta name="apple-mobile-web-app-title" content="Kostly Tracker">
+    <meta name="description" content="Aplikasi manajemen keuangan khusus anak kost untuk mencatat pemasukan, pengeluaran, dan memantau kondisi keuangan secara real-time.">
+
+    <!-- SEO dan Social Preview -->
+    <meta property="og:title" content="Kostly Tracker">
+    <meta property="og:description" content="Aplikasi Manajemen Keuangan Anak Kost">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,7 +92,7 @@
                 <div class="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                     <span class="material-symbols-rounded text-white text-xl">account_balance_wallet</span>
                 </div>
-                <span class="text-lg font-bold text-primary font-sans">Kostly</span>
+                <span class="text-lg font-bold text-primary font-sans">Kostly Tracker</span>
             </a>
             
             <!-- Mid Nav Links -->
@@ -116,7 +135,7 @@
                 Kelola Keuangan<br><span class="text-primary">Dengan Mudah</span>
             </h1>
             <p class="text-lg sm:text-xl text-on-surface-variant mb-8 sm:mb-12 max-w-2xl mx-auto px-4 leading-relaxed">
-                Catat, pantau, dan optimalkan pengeluaran Anda dengan dashboard modern dan intuitive. Percayakan kebutuhan finansial Anda pada Kostly.
+                Kostly Tracker membantu anak kost mengelola pemasukan dan pengeluaran harian secara mudah, cepat, dan terorganisir.
             </p>
             
             <!-- CTA Buttons -->
@@ -138,13 +157,13 @@
             <div class="space-y-6 animate-fade-in-up">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold">
                     <span class="material-symbols-rounded text-base">info</span>
-                    Tentang Kostly
+                    Tentang Kostly Tracker
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-bold text-on-background tracking-tight">
                     Solusi Cerdas Pengelolaan Finansial Anak Kost
                 </h2>
                 <p class="text-on-surface-variant leading-relaxed text-lg">
-                    Kostly dirancang khusus untuk membantu mahasiswa dan pekerja rantau mengelola anggaran bulanan mereka. Kami memahami tantangan mengatur keuangan di tanah rantau, mulai dari bayar kost, makan harian, hingga tabungan darurat.
+                    Kostly Tracker dirancang khusus untuk membantu mahasiswa dan pekerja rantau mengelola anggaran bulanan mereka. Kami memahami tantangan mengatur keuangan di tanah rantau, mulai dari bayar kost, makan harian, hingga tabungan darurat.
                 </p>
                 <div class="space-y-4">
                     <div class="flex items-start gap-3">
@@ -211,7 +230,7 @@
                         <div class="pt-2 border-t border-outline-variant/50 space-y-3">
                             <div class="flex justify-between items-center text-sm">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-error"></span>
+                                     <span class="w-2 h-2 rounded-full bg-error"></span>
                                     <span class="text-on-surface">Laundry Kiloan</span>
                                 </div>
                                 <span class="font-semibold text-error">-Rp 25.000</span>
@@ -239,41 +258,50 @@
             </div>
             
             <!-- Features Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 sm:gap-8">
                 <!-- Feature 1 -->
                 <div class="bg-surface-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                     <div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
                         <span class="material-symbols-rounded text-primary text-3xl">receipt_long</span>
                     </div>
-                    <h3 class="text-xl font-bold text-on-surface mb-2">Catat Transaksi</h3>
-                    <p class="text-on-surface-variant">Catat pemasukan dan pengeluaran dengan cepat dan mudah</p>
+                    <h3 class="text-xl font-bold text-on-surface mb-2">Manajemen Transaksi</h3>
+                    <p class="text-on-surface-variant text-sm">Catat pemasukan dan pengeluaran harian kamu secara terperinci</p>
                 </div>
                 
                 <!-- Feature 2 -->
                 <div class="bg-surface-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                     <div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                        <span class="material-symbols-rounded text-primary text-3xl">trending_up</span>
+                        <span class="material-symbols-rounded text-primary text-3xl">category</span>
                     </div>
-                    <h3 class="text-xl font-bold text-on-surface mb-2">Analisis Mendalam</h3>
-                    <p class="text-on-surface-variant">Visualisasi grafik dan statistik untuk pemahaman lebih baik</p>
+                    <h3 class="text-xl font-bold text-on-surface mb-2">Kategori Keuangan</h3>
+                    <p class="text-on-surface-variant text-sm">Sesuaikan kategori pemasukan dan pengeluaran sesuai pola belanja</p>
                 </div>
                 
                 <!-- Feature 3 -->
                 <div class="bg-surface-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                     <div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                        <span class="material-symbols-rounded text-primary text-3xl">category</span>
+                        <span class="material-symbols-rounded text-primary text-3xl">dashboard</span>
                     </div>
-                    <h3 class="text-xl font-bold text-on-surface mb-2">Kategori Fleksibel</h3>
-                    <p class="text-on-surface-variant">Buat kategori sesuai kebutuhan Anda untuk organisasi sempurna</p>
+                    <h3 class="text-xl font-bold text-on-surface mb-2">Dashboard Interaktif</h3>
+                    <p class="text-on-surface-variant text-sm">Visualisasi saldo, pemasukan, dan pengeluaran secara real-time</p>
                 </div>
                 
                 <!-- Feature 4 -->
                 <div class="bg-surface-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                     <div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                        <span class="material-symbols-rounded text-primary text-3xl">dashboard</span>
+                        <span class="material-symbols-rounded text-primary text-3xl">trending_up</span>
                     </div>
-                    <h3 class="text-xl font-bold text-on-surface mb-2">Dashboard Modern</h3>
-                    <p class="text-on-surface-variant">Pantau keuangan Anda dengan dashboard intuitif dan responsif</p>
+                    <h3 class="text-xl font-bold text-on-surface mb-2">Statistik Pengeluaran</h3>
+                    <p class="text-on-surface-variant text-sm">Analisis pola pengeluaran kamu dengan grafik yang mudah dipahami</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-surface-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+                        <span class="material-symbols-rounded text-primary text-3xl">bar_chart</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-on-surface mb-2">Laporan Keuangan</h3>
+                    <p class="text-on-surface-variant text-sm">Unduh dan pantau laporan keuangan bulanan secara berkala</p>
                 </div>
             </div>
             
@@ -286,12 +314,12 @@
                     <div class="flex gap-8 whitespace-nowrap animate-marquee">
                         <!-- Group 1 -->
                         <div class="flex items-center gap-8 shrink-0">
-                            <!-- Laravel Badge -->
+                            <!-- Kostly Tracker Badge -->
                             <div class="inline-flex items-center gap-3 bg-surface border border-outline-variant/60 px-5 py-3.5 rounded-xl shadow-sm hover:border-primary/40 hover:shadow transition duration-300">
                                 <svg class="w-6 h-6 text-[#FF2D20] shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M20.085 10.2L12 5.518l-8.085 4.682v9.364L12 24.246l8.085-4.682V10.2zM12 7.79l5.962 3.456L12 14.704l-5.962-3.457L12 7.79zM5.962 12.872L11 15.79v5.836l-5.038-2.918v-5.836zm12.076 5.836L13 21.626v-5.837l5.038-2.917v5.836z" />
                                 </svg>
-                                <span class="font-bold text-on-surface text-sm font-sans tracking-tight">Laravel 11</span>
+                                <span class="font-bold text-on-surface text-sm font-sans tracking-tight">Kostly Tracker</span>
                             </div>
                             <!-- Tailwind CSS -->
                             <div class="inline-flex items-center gap-3 bg-surface border border-outline-variant/60 px-5 py-3.5 rounded-xl shadow-sm hover:border-primary/40 hover:shadow transition duration-300">
@@ -399,10 +427,10 @@
                 <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                     <span class="material-symbols-rounded text-white text-lg">account_balance_wallet</span>
                 </div>
-                <span class="font-bold text-primary">Kostly</span>
+                <span class="font-bold text-primary">Kostly Tracker</span>
             </div>
             <p class="text-on-surface-variant text-sm">
-                © {{ date('Y') }} Kostly. Kelola uang kost dengan mudah dan percaya diri.
+                © 2026 Kostly Tracker. All Rights Reserved.
             </p>
         </div>
     </footer>

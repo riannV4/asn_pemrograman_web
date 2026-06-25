@@ -10,7 +10,7 @@
 
                 <!-- App Name -->
                 <div>
-                    <h1 class="text-headline-md font-bold text-primary">Tracker Kostly</h1>
+                    <h1 class="text-headline-md font-bold text-primary">Kostly Tracker</h1>
                     <p class="text-xs text-on-surface-variant">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
                 </div>
             </div>

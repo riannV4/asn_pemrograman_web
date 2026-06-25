@@ -1,3 +1,4 @@
+@props(['title' => null])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -5,7 +6,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ $title ? $title . ' | ' . config('app.name', 'Kostly Tracker') : config('app.name', 'Kostly Tracker') }}</title>
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
+        <!-- Metadata Website -->
+        <meta name="application-name" content="Kostly Tracker">
+        <meta name="apple-mobile-web-app-title" content="Kostly Tracker">
+        <meta name="description" content="Aplikasi manajemen keuangan khusus anak kost untuk mencatat pemasukan, pengeluaran, dan memantau kondisi keuangan secara real-time.">
+
+        <!-- SEO dan Social Preview -->
+        <meta property="og:title" content="Kostly Tracker">
+        <meta property="og:description" content="Aplikasi Manajemen Keuangan Anak Kost">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta name="twitter:card" content="summary_large_image">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

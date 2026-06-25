@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Lupa Password">
     <div class="space-y-8">
         <!-- Header with Logo -->
         <div class="text-center">

@@ -1,4 +1,15 @@
 @props(['currentPage' => 'dashboard'])
+@php
+    $pageTitles = [
+        'dashboard' => 'Dashboard',
+        'transactions' => 'Transaksi',
+        'create' => 'Transaksi',
+        'reports' => 'Laporan',
+        'profile' => 'Profil',
+        'categories' => 'Kategori'
+    ];
+    $pageTitle = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Dashboard';
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -6,7 +17,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Expense Tracker') }}</title>
+        <title>{{ $pageTitle }} | {{ config('app.name', 'Kostly Tracker') }}</title>
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
+        <!-- Metadata Website -->
+        <meta name="application-name" content="Kostly Tracker">
+        <meta name="apple-mobile-web-app-title" content="Kostly Tracker">
+        <meta name="description" content="Aplikasi manajemen keuangan khusus anak kost untuk mencatat pemasukan, pengeluaran, dan memantau kondisi keuangan secara real-time.">
+
+        <!-- SEO dan Social Preview -->
+        <meta property="og:title" content="Kostly Tracker">
+        <meta property="og:description" content="Aplikasi Manajemen Keuangan Anak Kost">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta name="twitter:card" content="summary_large_image">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -37,7 +67,7 @@
                             <span class="material-symbols-rounded filled">account_balance_wallet</span>
                         </div>
                         <div class="min-w-0">
-                            <h1 class="text-headline-md font-bold text-white truncate">Tracker Kostly</h1>
+                            <h1 class="text-headline-md font-bold text-white truncate">Kostly Tracker</h1>
                             <p class="text-xs text-white/80 truncate">Anak Kost Management</p>
                         </div>
                     </a>
