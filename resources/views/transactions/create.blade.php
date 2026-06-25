@@ -247,45 +247,13 @@
                     }
                     this.type = detectedType;
                     
-                    // 2. Parse amount - support both digits and Indonesian number words
-                    let amount = 0;
-                    
-                    // First try to find digits
-                    const numberMatch = text.match(/\d+[\d.]*\d*/);
-                    if (numberMatch) {
-                        amount = parseInt(numberMatch[0].replace(/\./g, ''));
-                    } else {
-                        // Parse Indonesian number words
-                        const numberWords = {
-                            'nol': 0, 'satu': 1, 'dua': 2, 'tiga': 3, 'empat': 4,
-                            'lima': 5, 'enam': 6, 'tujuh': 7, 'delapan': 8, 'sembilan': 9,
-                            'sepuluh': 10, 'sebelas': 11, 'belas': 10, 'puluh': 10,
-                            'seratus': 100, 'ratus': 100, 'seribu': 1000, 'ribu': 1000,
-                            'juta': 1000000
-                        };
-                        
-                        // Try to parse common patterns like "dua puluh lima ribu"
-                        if (lowerText.includes('ribu')) {
-                            const beforeRibu = lowerText.split('ribu')[0];
-                            if (beforeRibu.includes('puluh')) {
-                                const parts = beforeRibu.split('puluh');
-                                const tens = this.wordToNumber(parts[0].trim(), numberWords);
-                                const ones = parts[1] ? this.wordToNumber(parts[1].trim(), numberWords) : 0;
-                                amount = (tens * 10 + ones) * 1000;
-                            } else {
-                                const num = this.wordToNumber(beforeRibu.trim(), numberWords);
-                                amount = num * 1000;
-                            }
-                        } else if (lowerText.includes('ratus')) {
-                            const beforeRatus = lowerText.split('ratus')[0];
-                            const num = this.wordToNumber(beforeRatus.trim(), numberWords);
-                            amount = num * 100;
-                        }
-                    }
-                    
+                    // 2. Parse amount - support digits, decimals, and Indonesian scale words
+                    const amount = window.parseIndonesianAmount?.(text) ?? 0;
+
                     if (amount > 0) {
-                        this.amount = amount.toString();
-                        this.amountDisplay = this.formatNumber(amount.toString());
+                        const integerAmount = Math.round(amount);
+                        this.amount = integerAmount.toString();
+                        this.amountDisplay = this.formatNumber(integerAmount.toString());
                     }
                     
                     // 3. Try to detect category from keywords
@@ -324,16 +292,6 @@
                     return this.categories.filter(cat => cat.type === this.type);
                 },
                 
-                wordToNumber(word, numberWords) {
-                    if (!word) return 0;
-                    word = word.trim();
-                    if (word.startsWith('se')) {
-                        word = word.substring(2);
-                        return 1 * (numberWords[word] || 1);
-                    }
-                    return numberWords[word] || 0;
-                },
-
                 handleScanUpload(event) {
                     const file = event.target.files[0];
                     if (!file) return;

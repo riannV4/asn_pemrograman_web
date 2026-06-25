@@ -87,54 +87,13 @@ class VoiceTransactionInput {
     }
 }
 
-// Parse Indonesian number words to digits - IMPROVED
+// Parse Indonesian number words to digits - delegates to the shared Vite parser
 window.parseIndonesianNumber = function(text) {
-    text = text.toLowerCase().replace(/[.,]/g, '');
-    
-    // Extract direct numbers first
-    const digitMatch = text.match(/\d+/);
-    if (digitMatch) {
-        return parseInt(digitMatch[0]);
+    if (typeof window.parseIndonesianAmount === 'function') {
+        return window.parseIndonesianAmount(text);
     }
 
-    // Indonesian number words
-    const numbers = {
-        'nol': 0, 'satu': 1, 'dua': 2, 'tiga': 3, 'empat': 4,
-        'lima': 5, 'enam': 6, 'tujuh': 7, 'delapan': 8, 'sembilan': 9,
-        'sepuluh': 10, 'sebelas': 11, 'seratus': 100, 'seribu': 1000,
-        'ribu': 1000, 'ratus': 100, 'puluh': 10, 'belas': 10,
-        'juta': 1000000
-    };
-
-    let total = 0;
-    let current = 0;
-    const words = text.split(/\s+/);
-    
-    for (let i = 0; i < words.length; i++) {
-        const word = words[i];
-        const num = numbers[word];
-        
-        if (num) {
-            if (num >= 1000) {
-                current = (current || 1) * num;
-                total += current;
-                current = 0;
-            } else if (num >= 100) {
-                current = (current || 1) * num;
-            } else if (num >= 10) {
-                if (word === 'belas') {
-                    current = (current || 0) + num;
-                } else {
-                    current *= num;
-                }
-            } else {
-                current += num;
-            }
-        }
-    }
-    
-    total += current;
-    return total > 0 ? total : null;
+    return null;
 };
 
 // Parse full transaction sentence - NEW FEATURE
