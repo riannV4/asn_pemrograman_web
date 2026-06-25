@@ -41,13 +41,20 @@
                         </div>
 
                         <!-- Delete Button -->
-                        <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus kategori ini?');" class="shrink-0">
+                        <form id="delete-category-{{ $category->id }}-form" action="{{ route('categories.destroy', $category) }}" method="POST" class="shrink-0">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
+                            <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-{{ $category->id }}-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
                                 <span class="material-symbols-rounded">delete</span>
                             </button>
                         </form>
+                        <x-modal id="delete-category-{{ $category->id }}-modal" title="Hapus Kategori">
+                            <p>Apakah Anda yakin ingin menghapus kategori {{ $category->name }}?</p>
+                            <x-slot name="footer">
+                                <button @click="$dispatch('close-modal')">Batal</button>
+                                <button @click="document.getElementById('delete-category-{{ $category->id }}-form').submit()">Hapus</button>
+                            </x-slot>
+                        </x-modal>
                     </div>
                 @empty
                     <div class="bg-surface rounded-card p-12 text-center shadow-card">
@@ -384,13 +391,20 @@
                             <span class="ml-2">0 transaksi</span>
                         </p>
                     </div>
-                    <form action="/categories/${category.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus kategori ini?');" class="shrink-0">
+                    <form action="/categories/${category.id}" method="POST" class="shrink-0">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                         <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
+                        <button type="button" @click="$dispatch('open-modal', { id: 'delete-category-${category.id}-modal' })" class="w-10 h-10 rounded-full hover:bg-error-container flex items-center justify-center text-error transition-colors">
                             <span class="material-symbols-rounded">delete</span>
                         </button>
                     </form>
+                    <x-modal id="delete-category-${category.id}-modal" title="Hapus Kategori">
+                        <p>Apakah Anda yakin ingin menghapus kategori ${category.name}?</p>
+                        <x-slot name="footer">
+                            <button @click="$dispatch('close-modal')">Batal</button>
+                            <button onclick="this.closest('x-modal').previousElementSibling.submit()">Hapus</button>
+                        </x-slot>
+                    </x-modal>
                 </div>
             `;
             

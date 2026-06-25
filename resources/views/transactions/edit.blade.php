@@ -94,14 +94,21 @@
             <div class="card-shadow bg-white rounded-[28px] p-6">
                 <h3 class="font-semibold text-error mb-2">Hapus Transaksi</h3>
                 <p class="text-sm text-on-surface-variant mb-4">Tindakan ini tidak dapat dibatalkan</p>
-                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?');">
+                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" id="delete-transaction-form">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-3 rounded-2xl hover:scale-[1.02] transition-all card-shadow flex items-center justify-center gap-2">
+                    <button type="button" @click="$dispatch('open-modal', { id: 'delete-transaction-modal' })" class="w-full bg-gradient-to-r from-error to-red-600 text-white font-bold py-3 rounded-2xl hover:scale-[1.02] transition-all card-shadow flex items-center justify-center gap-2">
                         <span class="material-symbols-rounded">delete</span>
                         Hapus Transaksi
                     </button>
                 </form>
+<x-modal id="delete-transaction-modal" title="Hapus Transaksi">
+    <p>Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.</p>
+    <x-slot name="footer">
+        <button @click="$dispatch('close-modal')">Batal</button>
+        <button @click="document.getElementById('delete-transaction-form').submit()">Hapus</button>
+    </x-slot>
+</x-modal>
             </div>
 
         </div>
