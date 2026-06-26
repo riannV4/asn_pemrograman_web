@@ -23,34 +23,34 @@
 
 ### Backend
 
-| Teknologi | Versi | Keterangan |
-|---|---|---|
-| [Laravel](https://laravel.com) | ^12.0 | PHP web framework |
-| PHP | ^8.2 | Server-side language |
-| SQLite | *(default)* | Database ringan bawaan (bisa diganti PostgreSQL/MySQL) |
-| Laravel Breeze | ^2.4 | Starter kit autentikasi |
-| Laravel Tinker | ^2.10 | REPL interaktif |
+| Teknologi                      | Versi       | Keterangan                                             |
+| ------------------------------ | ----------- | ------------------------------------------------------ |
+| [Laravel](https://laravel.com) | ^12.0       | PHP web framework                                      |
+| PHP                            | ^8.2        | Server-side language                                   |
+| SQLite                         | _(default)_ | Database ringan bawaan (bisa diganti PostgreSQL/MySQL) |
+| Laravel Breeze                 | ^2.4        | Starter kit autentikasi                                |
+| Laravel Tinker                 | ^2.10       | REPL interaktif                                        |
 
 ### Frontend
 
-| Teknologi | Versi | Keterangan |
-|---|---|---|
-| [Tailwind CSS](https://tailwindcss.com) | ^3.1 | Utility-first CSS framework |
-| [Alpine.js](https://alpinejs.dev) | ^3.4 | Lightweight JS framework |
-| [Vite](https://vitejs.dev) | ^7.0 | Build tool & dev server |
-| Chart.js | — | Visualisasi grafik (via CDN di Blade views) |
-| Material Symbols | — | Icon set dari Google |
-| Blade Templating | — | Templating engine bawaan Laravel |
+| Teknologi                               | Versi | Keterangan                                  |
+| --------------------------------------- | ----- | ------------------------------------------- |
+| [Tailwind CSS](https://tailwindcss.com) | ^3.1  | Utility-first CSS framework                 |
+| [Alpine.js](https://alpinejs.dev)       | ^3.4  | Lightweight JS framework                    |
+| [Vite](https://vitejs.dev)              | ^7.0  | Build tool & dev server                     |
+| Chart.js                                | —     | Visualisasi grafik (via CDN di Blade views) |
+| Material Symbols                        | —     | Icon set dari Google                        |
+| Blade Templating                        | —     | Templating engine bawaan Laravel            |
 
 ### Development & Testing
 
-| Teknologi | Keterangan |
-|---|---|
-| Vitest | Unit testing JavaScript |
-| PHPUnit ^11 | Unit testing PHP |
-| Laravel Pint | Code style fixer (PSR-12) |
-| Laravel Pail | Log viewer real-time |
-| Laravel Sail | Docker environment untuk development |
+| Teknologi    | Keterangan                                   |
+| ------------ | -------------------------------------------- |
+| Vitest       | Unit testing JavaScript                      |
+| PHPUnit ^11  | Unit testing PHP                             |
+| Laravel Pint | Code style fixer (PSR-12)                    |
+| Laravel Pail | Log viewer real-time                         |
+| Laravel Sail | Docker environment untuk development         |
 | Concurrently | Menjalankan banyak proses paralel (dev mode) |
 
 ---
@@ -167,6 +167,7 @@ composer run setup
 ```
 
 Perintah ini akan secara otomatis:
+
 - Menjalankan `composer install`
 - Menyalin `.env.example` → `.env` (jika belum ada)
 - Menghasilkan `APP_KEY`
@@ -218,6 +219,7 @@ composer run dev
 ```
 
 Perintah ini menjalankan secara paralel:
+
 - `php artisan serve` — Laravel server
 - `php artisan queue:listen` — Queue worker
 - `php artisan pail` — Log viewer
@@ -285,32 +287,32 @@ asn_pemrograman_web/
 
 ### Publik
 
-| Method | URI | Keterangan |
-|---|---|---|
-| `GET` | `/` | Landing page |
+| Method | URI         | Keterangan         |
+| ------ | ----------- | ------------------ |
+| `GET`  | `/`         | Landing page       |
 | `POST` | `/register` | Register akun baru |
-| `POST` | `/login` | Login |
-| `POST` | `/logout` | Logout |
+| `POST` | `/login`    | Login              |
+| `POST` | `/logout`   | Logout             |
 
 ### Terproteksi (Auth Required)
 
-| Method | URI | Keterangan |
-|---|---|---|
-| `GET` | `/dashboard` | Halaman dashboard |
-| `GET` | `/transactions` | Daftar transaksi |
-| `POST` | `/transactions` | Buat transaksi baru |
-| `GET` | `/transactions/{id}/edit` | Form edit transaksi |
-| `PUT` | `/transactions/{id}` | Update transaksi |
-| `DELETE` | `/transactions/{id}` | Hapus transaksi |
-| `POST` | `/transactions/scan-struk` | Scan struk via OCR |
-| `GET` | `/categories` | Daftar kategori |
-| `POST` | `/categories` | Buat kategori baru |
-| `PUT` | `/categories/{id}` | Update kategori |
-| `DELETE` | `/categories/{id}` | Hapus kategori |
-| `GET` | `/reports` | Laporan & statistik |
-| `GET` | `/profile` | Form edit profil |
-| `PATCH` | `/profile` | Update profil |
-| `DELETE` | `/profile` | Hapus akun |
+| Method   | URI                        | Keterangan          |
+| -------- | -------------------------- | ------------------- |
+| `GET`    | `/dashboard`               | Halaman dashboard   |
+| `GET`    | `/transactions`            | Daftar transaksi    |
+| `POST`   | `/transactions`            | Buat transaksi baru |
+| `GET`    | `/transactions/{id}/edit`  | Form edit transaksi |
+| `PUT`    | `/transactions/{id}`       | Update transaksi    |
+| `DELETE` | `/transactions/{id}`       | Hapus transaksi     |
+| `POST`   | `/transactions/scan-struk` | Scan struk via OCR  |
+| `GET`    | `/categories`              | Daftar kategori     |
+| `POST`   | `/categories`              | Buat kategori baru  |
+| `PUT`    | `/categories/{id}`         | Update kategori     |
+| `DELETE` | `/categories/{id}`         | Hapus kategori      |
+| `GET`    | `/reports`                 | Laporan & statistik |
+| `GET`    | `/profile`                 | Form edit profil    |
+| `PATCH`  | `/profile`                 | Update profil       |
+| `DELETE` | `/profile`                 | Hapus akun          |
 
 ---
 
@@ -358,13 +360,13 @@ Pilih Metode Input:
 
 ### Color Palette
 
-| Token | Hex | Keterangan |
-|---|---|---|
-| Primary | `#005a71` | Teal (aksen utama) |
-| Secondary | `#565e74` | Dark Blue-Gray |
-| Tertiary | `#794602` | Orange |
-| Error | `#ba1a1a` | Red |
-| Surface | `#f7fafc` | Light Gray (background) |
+| Token     | Hex       | Keterangan              |
+| --------- | --------- | ----------------------- |
+| Primary   | `#005a71` | Teal (aksen utama)      |
+| Secondary | `#565e74` | Dark Blue-Gray          |
+| Tertiary  | `#794602` | Orange                  |
+| Error     | `#ba1a1a` | Red                     |
+| Surface   | `#f7fafc` | Light Gray (background) |
 
 ### Tipografi
 
@@ -444,13 +446,13 @@ npm run test:watch
 **Mata Kuliah**: Pemrograman Web
 **Institusi**: Universitas Mercu Buana Yogyakarta
 
-| No | Nama | NPM | Role |
-|---|---|---|---|
-| 1 | Khilmi Wahyu Saputra | 241110061 | Full Stack Developer |
-| 2 | Muh Duta Arkazora | 241110079 | Frontend Developer |
-| 3 | Trian Rossi Karurukan | 241110111 | Frontend Developer |
-| 4 | Muh Adzin Fakhir Rahman | 241110076 | UI/UX Designer |
-| 5 | Muh Yasir Al Fatah | 241110085 | UI/UX Designer |
+| No  | Nama                    | NPM       | Role                 |
+| --- | ----------------------- | --------- | -------------------- |
+| 1   | Khilmi Wahyu Saputra    | 241110061 | Full Stack Developer |
+| 2   | Muh Duta Arkazora       | 241110079 | Frontend Developer   |
+| 3   | Trian Rossi Karurukan   | 241110111 | Full Stack Developer |
+| 4   | Muh Adzin Fakhir Rahman | 241110076 | Frontend Developer   |
+| 5   | Muh Yasir Al Fatah      | 241110085 | UI/UX Designer       |
 
 ---
 
@@ -466,5 +468,4 @@ Untuk pertanyaan atau feedback, silakan hubungi tim pengembang atau buka issue d
 
 ---
 
-> *Kostly Tracker — Catat, Analisis, Hemat. SAYA AKAN LAWAN!!* 🚀
-
+> _Kostly Tracker — Catat, Analisis, Hemat. SAYA AKAN LAWAN!!_ 🚀
